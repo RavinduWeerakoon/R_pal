@@ -29,8 +29,8 @@ class TestStringMethods(unittest.TestCase):
 
         # for z in zip(l.token, l.lexword):
         #     print(z)
-        # for token in l.tokens:
-        #     print(token)
+        for token in l.tokens:
+            print(token)
 
     
         new_token_list = list(filter(lambda x: x.type != "DELETE", l.tokens))

@@ -10,7 +10,7 @@ class Queue():
     def is_empty(self) -> bool:
         return len(self.queue) == 0
     def peek(self, index=0) -> Token:
-        if len(self.queue) > index + 1:
+        if len(self.queue) >= index + 1:
             return self.queue[index]
         else:
             return None
