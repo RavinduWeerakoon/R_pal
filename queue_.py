@@ -1,8 +1,8 @@
 from token_ import Token
 
 class Queue():
-    def __init__(self):
-        self.queue = []
+    def __init__(self, queue_list=None):
+        self.queue = queue_list if queue_list else []
     def enqueue(self, item) -> None:
         self.queue.append(item)
     def dequeue(self) -> Token:
