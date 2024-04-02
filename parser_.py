@@ -191,7 +191,7 @@ class Parser():
             
         elif self.input_stream.peek().value == "(":
                 self.read("(")
-                E()
+                self.E()
                 self.read(")")
         
         elif self.input_stream.peek().value == "dummy":
