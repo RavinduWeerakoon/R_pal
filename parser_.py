@@ -56,6 +56,158 @@ def Ew():
         read(";")
 
 
+def T():
+    Ta()
+    if input_stream.peek().value == ",":
+        read(",")
+        Ta()
+        while input_stream.peek().value == ",":
+            read(",")
+            Ta()
+
+
+def Ta():
+    Tc()
+    if input_stream.peek().value == "aug":
+        read("aug")
+        Tc()
+        while input_stream.peek().value == "aug":
+            read("aug")
+            Tc()
+
+def Tc():
+    B()
+    if input_stream.peak.value == ";":
+        read(";")
+    else:
+        read("->")
+        Tc()
+        read("|")
+        Tc()
+
+
+def B():
+    Bt()
+    while input_stream.peek().value == "or":
+        read("or")
+        Bt()    
+
+def Bt():
+    Bs()
+    while input_stream.peek().value == "&":
+        read("&")
+        Bs()
+
+def Bs():
+    if input_stream.peek().value == "not":
+        read("not")
+        Bp()
+    else:
+        Bp()
+
+def Bp():
+    A()
+    if input_stream.peek().value == "gr":
+        read("gr")
+        A()
+    elif input_stream.peek().value == ">":
+        read(">")
+        A()
+    elif input_stream.peek().value == ">=":
+        read(">=")
+        A()
+    elif input_stream.peek().value == "<":
+        read("<")
+        A()
+    elif input_stream.peek().value == "<=":
+        read("<=")
+        A()
+    elif input_stream.peek().value == "eq":
+        read("eq")
+        A()
+    elif input_stream.peek().value == "ne":
+        read("ne")
+        A()
+
+def A():
+    if input_stream.peek().value == "+":
+        read("+")
+        At()
+
+    elif input_stream.peek().value == "-":
+        read("-")
+        At()
+
+    else:
+        At()
+        if input_stream.peek().value == "+":
+            read("+")
+            At()
+        elif input_stream.peek().value == "-":
+            read("-")
+            At()
+
+
+def At():
+    Af()
+    if input_stream.peek().value == "*":
+        read("*")
+        Af()
+    elif input_stream.peek().value == "/":
+        read("/")
+        Af()
+
+
+def Af():
+    Ap()
+    if input_stream.peek().value == "**":
+        read("**")
+        Af()
+
+def Ap():
+    R()
+    while input_stream.peek().value == "@":
+        read("@")
+        read(type_check=True, type_="IDENTIFIER")
+        R()
+
+def R():
+    Rn()
+    while input_stream.peek().type == "IDENTIFIER" or input_stream.peek().type == "INTEGER" or input_stream.peek().type == "STRING" or input_stream.peek().value == "nil" or input_stream.peek().value == "dummy" or input_stream.peek().value == "true" or input_stream.peek().value == "false" or input_stream.peek().type == "left_bracket":
+        Rn()
+
+
+def Rn():
+    if input_stream.peek().type == "IDENTIFIER":
+        read(type_check=True, type_="IDENTIFIER")
+
+    elif input_stream.peek().type == "INTEGER":
+        read(type_check=True, type_="INTEGER")
+
+    elif input_stream.peek().type == "STRING":
+        read(type_check=True, type_="STRING")
+    
+    elif input_stream.peek().value == "true":
+        read("true")
+    
+    elif input_stream.peek().value == "false":
+        read("false")
+
+    elif input_stream.peek().value == "nil":
+        read("nil")
+        
+    elif input_stream.peek().value == "(":
+            read("(")
+            E()
+            read(")")
+    
+    elif input_stream.peek().value == "dummy":
+        read("dummy")
+
+    else:
+        raise Exception(f"Expected an identifier, integer, string, nil, dummy, true, false or an expression but got {input_stream.peek()}")
+
+
 def D():
     Da()
 
