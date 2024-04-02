@@ -183,7 +183,7 @@ class Parser():
         print("R", self.input_stream.peek().value)
         self.Rn()
         next = self.input_stream.peek()
-        while next.type == "IDENTIFIER" or next.type == "INTEGER" or next.type == "STRING" or next.peek().value == "nil" or next.value == "dummy" or next.value == "true" or next.peek().value == "false" or next.type == "left_bracket":
+        while next.type == "IDENTIFIER" or next.type == "INTEGER" or next.type == "STRING" or next.value == "nil" or next.value == "dummy" or next.value == "true" or next.value == "false" or next.type == "left_bracket":
             self.Rn()
 
 
@@ -208,9 +208,9 @@ class Parser():
             self.read("nil")
             
         elif self.input_stream.peek().value == "(":
-                self.read("(")
-                self.E()
-                self.read(")")
+            self.read("(")
+            self.E()
+            self.read(")")
         
         elif self.input_stream.peek().value == "dummy":
             self.read("dummy")
