@@ -1,7 +1,10 @@
 
 import re
-
 from token_ import Token
+
+# Keywords for the language
+keywords = ["let", "in", "fn", "aug", "or", "not", "gr", "ge", "ls", "le", "eq", "ne", "where", "rec", "within", "and", "true", "false", "nil", "dummy", "list"]
+
 # Lexcal rules for the language
 rules = [
              ('IDENTIFIER', r'[a-zA-Z]\w*'),
@@ -57,9 +60,11 @@ class Lex:
 
             if token_type == 'MISMATCH':
                 raise RuntimeError('%r unexpected on line %d' % (token_lexword, self.lin_num))
+            elif token_lexword in keywords:
+                # Create a new token object and append it to the list of tokens
+                token = Token("KEYWORD", token_lexword)
+                self.tokens.append(token)
             else:
                 # Create a new token object and append it to the list of tokens
                 token = Token(token_type, token_lexword)
                 self.tokens.append(token)
-                # self.token.append(lex_map[token_type])
-                # self.lexword.append(token_lexword)
