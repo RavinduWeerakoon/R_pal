@@ -1,6 +1,6 @@
 class Stack():
-    def __init__(self, stack=None):
-        self.stack = stack if stack else []
+    def __init__(self, stack_list=None):
+        self.stack = stack_list if stack_list else []
 
     def push(self, item):
         self.stack.append(item)
