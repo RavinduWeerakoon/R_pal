@@ -36,7 +36,7 @@ class Parser():
                 self.Vb()
         
         else:
-            self.Ew(self.input_stream)
+            self.Ew()
 
 
     def Ew(self):
