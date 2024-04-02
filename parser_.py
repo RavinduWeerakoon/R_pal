@@ -1,4 +1,5 @@
 from token_ import Token
+from queue import Queue
 
 class Parser():
 
@@ -12,29 +13,53 @@ class Parser():
         print(token.value)
 
 
+input_stream = Queue()
 
-def read(token: Token):
-    print(token.value)
+
+def read(value):
+    # Remove the token from the input stream
+    if value == input_stream.peek().value:
+        input_stream.dequeue()
+    else:
+        raise Exception(f"Expected {value} but got {input_stream.peek().value}")
+    return
 
 
 def D():
     pass
 
-def E(input_stream):
-    next = input_stream.pop()
+def E():
+    next = input_stream.peek()
     if next.value == "let":
         read("let")
-        D(input_stream)
+        D()
         read("in")
-        E(input_stream)
+        E()
 
     elif next.value == "fn":
         read("fn")
+        Vb()
+        while input_stream.peek().type == "left_bracket" or input_stream.peek().type == "IDENTIFIER":
+            Vb()
     
     else:
-        input_stream.push(next)
         Ew(input_stream)
 
 
 def Ew():
+    T()
+    if input_stream.peek().value == "where":
+        read("where")
+        Dr()
+
+    else:
+        read(";")
+
+def Vb():
+    pass
+
+def T():
+    pass
+
+def Dr():
     pass
