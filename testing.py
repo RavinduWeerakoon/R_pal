@@ -18,7 +18,7 @@ class TestStringMethods(unittest.TestCase):
         #         Ravind;""")
 
         l = Lex(""" 
-        let Sum(A) = Psum (A,Order A )
+        let Sum(A) = Psum (A,OrderA )
         where rec Psum (T,N) = N eq 0 -> 0
               | Psum(T,N-1)+T N
         in Print ( Sum (1,2,3,4,5) )

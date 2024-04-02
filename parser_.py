@@ -54,9 +54,6 @@ class Parser():
             self.read("where")
             self.Dr()
 
-        else:
-            self.read(";")
-
 
     def T(self):
         print("T", self.input_stream.peek().value)
@@ -82,9 +79,7 @@ class Parser():
     def Tc(self):
         print("Tc", self.input_stream.peek().value)
         self.B()
-        if self.input_stream.peak.value == ";":
-            self.read(";")
-        else:
+        if self.input_stream.peek().value == "->":
             self.read("->")
             self.Tc()
             self.read("|")
@@ -187,7 +182,8 @@ class Parser():
     def R(self):
         print("R", self.input_stream.peek().value)
         self.Rn()
-        while self.input_stream.peek().type == "IDENTIFIER" or self.input_stream.peek().type == "INTEGER" or self.input_stream.peek().type == "STRING" or self.input_stream.peek().value == "nil" or self.input_stream.peek().value == "dummy" or self.input_stream.peek().value == "true" or self.input_stream.peek().value == "false" or self.input_stream.peek().type == "left_bracket":
+        next = self.input_stream.peek()
+        while next.type == "IDENTIFIER" or next.type == "INTEGER" or next.type == "STRING" or next.peek().value == "nil" or next.value == "dummy" or next.value == "true" or next.peek().value == "false" or next.type == "left_bracket":
             self.Rn()
 
 
@@ -257,10 +253,11 @@ class Parser():
     def Db(self):
         print("Db", self.input_stream.peek().value)
         if self.input_stream.peek().type == "IDENTIFIER":
-            if self.input_stream.peek(index=1).value == "IDENTIFIER":
-                self.read()
+            print(self.input_stream.peek(index=1))
+            if self.input_stream.peek(index=1).type == "IDENTIFIER" or self.input_stream.peek(index=1).value == "(":
+                self.read(type_check=True, type_="IDENTIFIER")
                 self.Vb()
-                while self.input_stream.peek().value == "IDENTIFIER":
+                while self.input_stream.peek().type == "IDENTIFIER" or self.input_stream.peek().value == "(":
                     self.Vb()
                 self.read("=")
                 self.E()
@@ -294,7 +291,9 @@ class Parser():
     def Vl(self):
         print("Vl", self.input_stream.peek().value)
         if self.input_stream.peek().type == "IDENTIFIER":
-            self.read("IDENTIFIER")
-            self.read("list")
+            self.read(type_check=True, type_="IDENTIFIER")
+            while self.input_stream.peek().value == ",":
+                self.read(",")
+                self.read(type_check=True, type_="IDENTIFIER")
         else:
-            raise Exception("Expected IDENTIFIER but got {self.input_stream.peek().value}")
+            raise Exception(f"Expected IDENTIFIER but got {self.input_stream.peek().value}")
