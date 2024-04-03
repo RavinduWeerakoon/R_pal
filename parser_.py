@@ -6,8 +6,8 @@ s = Stack()
 class Node:
     def __init__(self, value, left, right):
         self.value = value
-        self.left = None
-        self.right = None
+        self.left = left
+        self.right = right
     
     def __repr__(self) -> str:
         return self.value

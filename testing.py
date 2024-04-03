@@ -4,11 +4,7 @@ from queue_ import Queue
 from parser_ import Parser
 from parser_ import s
 
-def inOrderTraversal(node):
-    if node is not None:
-        inOrderTraversal(node.left)
-        print(node)
-        inOrderTraversal(node.right)
+
 
 class TestStringMethods(unittest.TestCase):
 
@@ -48,7 +44,7 @@ class TestStringMethods(unittest.TestCase):
         p = Parser(input_stream)
         p.parse()
 
-        inOrderTraversal(s.pop())
+        
 
 
 
