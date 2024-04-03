@@ -18,7 +18,7 @@ class TestStringMethods(unittest.TestCase):
         #         Ravind;""")
 
         l = Lex(""" 
-        let Sum(A) = Psum (A,OrderA )
+        let Sum(A) = Psum (A,Order A )
         where rec Psum (T,N) = N eq 0 -> 0
               | Psum(T,N-1)+T N
         in Print ( Sum (1,2,3,4,5) )
@@ -29,8 +29,8 @@ class TestStringMethods(unittest.TestCase):
 
         # for z in zip(l.token, l.lexword):
         #     print(z)
-        for token in l.tokens:
-            print(token)
+        # for token in l.tokens:
+        #     print(token)
 
     
         new_token_list = list(filter(lambda x: x.type != "DELETE", l.tokens))
@@ -39,7 +39,7 @@ class TestStringMethods(unittest.TestCase):
         
         p = Parser(input_stream)
         p.parse()
-
+        p.print_stack()
 
 
 if __name__ == '__main__':
