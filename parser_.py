@@ -344,7 +344,7 @@ class Parser():
                 self.E()
                 self.build_tree("function_form", 3)
                 print("Db -> Vb+ = E")
-            elif self.input_stream.peek(index=1).value == "=":
+            elif self.input_stream.peek(index=1).value == "=" or self.input_stream.peek(index=1).value == ",":
                 self.read(type_check=True, type_="IDENTIFIER")
                 self.Vl()
                 self.read("=")
@@ -384,6 +384,7 @@ class Parser():
                 self.read(",")
                 self.read(type_check=True, type_="IDENTIFIER")
                 n+= 1
-            self.build_tree(",", n)
+            if n > 1:
+                self.build_tree(",", n)
         else:
             raise Exception(f"Expected IDENTIFIER but got {self.input_stream.peek().value}")
