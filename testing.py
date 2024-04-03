@@ -2,6 +2,14 @@ import unittest
 from lex import Lex
 from queue_ import Queue
 from parser_ import Parser
+from parser_ import s
+
+def inOrderTraversal(node):
+    if node is not None:
+        inOrderTraversal(node.left)
+        print(node)
+        inOrderTraversal(node.right)
+
 class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
@@ -29,8 +37,8 @@ class TestStringMethods(unittest.TestCase):
 
         # for z in zip(l.token, l.lexword):
         #     print(z)
-        for token in l.tokens:
-            print(token)
+        # for token in l.tokens:
+        #     print(token)
 
     
         new_token_list = list(filter(lambda x: x.type != "DELETE", l.tokens))
@@ -39,6 +47,10 @@ class TestStringMethods(unittest.TestCase):
         
         p = Parser(input_stream)
         p.parse()
+
+        inOrderTraversal(s.pop())
+
+
 
 
 
