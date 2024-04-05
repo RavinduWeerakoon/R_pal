@@ -338,12 +338,14 @@ class Parser():
             if self.input_stream.peek(index=1).type == "IDENTIFIER" or self.input_stream.peek(index=1).value == "(":
                 self.read(type_check=True, type_="IDENTIFIER")
                 self.Vb()
+                n = 2
                 while self.input_stream.peek().type == "IDENTIFIER" or self.input_stream.peek().value == "(":
                     self.Vb()
+                    n += 1
                 self.read("=")
                 self.E()
-                self.build_tree("function_form", 3)
-                print("Db -> Vb+ = E")
+                self.build_tree("function_form", n+1)
+                # print("Db -> Vb+ = E")
             elif self.input_stream.peek(index=1).value == "=" or self.input_stream.peek(index=1).value == ",":
                 self.read(type_check=True, type_="IDENTIFIER")
                 self.Vl()
