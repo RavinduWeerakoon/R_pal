@@ -4,6 +4,9 @@ class Node:
     def __init__(self, name):
         self.name = name
         self.children = []
+    
+    def __repr__(self):
+        return self.name
 
     def add_child(self, child) -> None:
         self.children.insert(0,child)

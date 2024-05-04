@@ -2,27 +2,17 @@ import unittest
 from lex import Lex
 from queue_ import Queue
 from parser_ import Parser
+from st import Standard_tree
+def print_tree(root):
+    if root:
+        print(root.name)
+        print_tree(root.left)
+        print_tree(root.right)
+
 class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
-        # l = Lex("""MY 12344 name
-        #         // test
-        #         // gesgsdgs
-        #         my_variable == 56;
-        #         // this is a comment
-
-        #         testfun() {
-        #             return 0;
-        #         }
-                
-        #         Ravind;""")
-
-        l = Lex(""" 
-        let Sum(A) = Psum (A,Order A )
-        where rec Psum (T,N) = N eq 0 -> 0
-              | Psum(T,N-1)+T N
-        in Print ( Sum (1,2,3,4,5) )
-        """)
+        l = Lex("""let x=3 in let y=4 in x+y""")
 
 
         l.tokenize()
@@ -39,7 +29,10 @@ class TestStringMethods(unittest.TestCase):
         
         p = Parser(input_stream)
         p.parse()
-        p.print_stack()
+        #p.print_stack()
+        root = Standard_tree(p.stack.pop())
+        x = root.parse_tree()
+        print_tree(x)
 
 
 if __name__ == '__main__':
