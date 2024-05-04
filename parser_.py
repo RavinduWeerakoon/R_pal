@@ -231,7 +231,7 @@ class Parser():
     
             else:
                 self.At()
-                if self.input_stream.peek() is not None:
+                while self.input_stream.peek() is not None and self.input_stream.peek().value in ["+", '-']:
                     if self.input_stream.peek().value == "+":
                         self.read("+")
                         self.At()
@@ -247,7 +247,7 @@ class Parser():
             print("At", self.input_stream.peek().value)
 
         self.Af()
-        if self.input_stream.peek() is not None:
+        while self.input_stream.peek() is not None and self.input_stream.peek().value in ["*", "/"]:
             if self.input_stream.peek().value == "*":
                 self.read("*")
                 self.Af()

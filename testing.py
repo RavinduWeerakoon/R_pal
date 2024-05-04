@@ -12,7 +12,7 @@ def print_tree(root):
 class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
-        l = Lex("""let x=3 in let y=4 in x+y""")
+        l = Lex("""Print (1, (2,3), 4)""")
 
 
         l.tokenize()
