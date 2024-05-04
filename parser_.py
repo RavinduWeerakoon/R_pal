@@ -6,9 +6,10 @@ from node import Node
 
 class Parser():
 
-    def __init__(self, input_stream: Queue):
+    def __init__(self, input_stream: Queue, debug=False):
         self.input_stream = input_stream
         self.stack = Stack()
+        self.debug = debug
 
 
     def read(self, value=None, type_check=False, type_=None):
@@ -53,7 +54,9 @@ class Parser():
         self.E()
 
     def E(self):
-        # print("E", self.input_stream.peek().value)
+        if self.debug:
+            print("E", self.input_stream.peek().value)
+
         next = self.input_stream.peek()
         if self.input_stream.peek() is not None:
             if next.value == "let":
@@ -80,7 +83,9 @@ class Parser():
 
 
     def Ew(self):
-        # print("Ew", self.input_stream.peek().value)
+        if self.debug:
+            print("Ew", self.input_stream.peek().value)
+
         self.T()
         if self.input_stream.peek() is not None and self.input_stream.peek().value == "where":
             self.read("where")
@@ -89,7 +94,9 @@ class Parser():
 
 
     def T(self):
-        # print("T", self.input_stream.peek().value)
+        if self.debug:
+            print("T", self.input_stream.peek().value)
+
         self.Ta()
         if self.input_stream.peek() is not None and self.input_stream.peek().value == ",":
             self.read(",")
@@ -103,7 +110,9 @@ class Parser():
 
 
     def Ta(self):
-        # print("Ta", self.input_stream.peek().value)
+        if self.debug:
+            print("Ta", self.input_stream.peek().value)
+
         self.Tc()
         if self.input_stream.peek() is not None and self.input_stream.peek().value == "aug":
             self.read("aug")
@@ -115,7 +124,9 @@ class Parser():
                 self.build_tree("aug", 2)
 
     def Tc(self):
-        # print("Tc", self.input_stream.peek().value)
+        if self.debug:
+            print("Tc", self.input_stream.peek().value)
+
         self.B()
         if self.input_stream.peek() is not None and self.input_stream.peek().value == "->":
             self.read("->")
@@ -126,7 +137,9 @@ class Parser():
 
 
     def B(self):
-        # print("B", self.input_stream.peek().value)
+        if self.debug:
+            print("B", self.input_stream.peek().value)
+
         self.Bt()
         while self.input_stream.peek() is not None and self.input_stream.peek().value == "or":
             self.read("or")
@@ -134,7 +147,9 @@ class Parser():
             self.build_tree("or", 2)
 
     def Bt(self):
-        # print("Bt", self.input_stream.peek().value)
+        if self.debug:
+            print("Bt", self.input_stream.peek().value)
+
         self.Bs()
         while self.input_stream.peek() is not None and self.input_stream.peek().value == "&":
             self.read("&")
@@ -142,7 +157,9 @@ class Parser():
             self.build_tree("&", 2)
 
     def Bs(self):
-        # print("Bs", self.input_stream.peek().value)
+        if self.debug:
+            print("Bs", self.input_stream.peek().value)
+
         if self.input_stream.peek() is not None:
             if self.input_stream.peek().value == "not":
                 self.read("not")
@@ -152,7 +169,9 @@ class Parser():
                 self.Bp()
 
     def Bp(self):
-        # print("Bp", self.input_stream.peek().value)
+        if self.debug:
+            print("Bp", self.input_stream.peek().value)
+
         self.A()
         if self.input_stream.peek() is not None:
             if self.input_stream.peek().value == "gr":
@@ -197,7 +216,9 @@ class Parser():
                 self.build_tree("ne", 2)
 
     def A(self):
-        # print("A", self.input_stream.peek().value)
+        if self.debug:
+            print("A", self.input_stream.peek().value)
+
         if self.input_stream.peek() is not None:
             if self.input_stream.peek().value == "+":
                 self.read("+")
@@ -222,7 +243,9 @@ class Parser():
 
 
     def At(self):
-        # print("At", self.input_stream.peek().value)
+        if self.debug:
+            print("At", self.input_stream.peek().value)
+
         self.Af()
         if self.input_stream.peek() is not None:
             if self.input_stream.peek().value == "*":
@@ -236,7 +259,9 @@ class Parser():
 
 
     def Af(self):
-        # print("Af", self.input_stream.peek().value)
+        if self.debug:
+            print("Af", self.input_stream.peek().value)
+
         self.Ap()
         if self.input_stream.peek() is not None and self.input_stream.peek().value == "**":
             self.read("**")
@@ -244,7 +269,9 @@ class Parser():
             self.build_tree("**", 2)
 
     def Ap(self):
-        # print("Ap", self.input_stream.peek().value)
+        if self.debug:
+            print("Ap", self.input_stream.peek().value)
+
         self.R()
         while self.input_stream.peek() is not None and self.input_stream.peek().value == "@":
             self.read("@")
@@ -253,7 +280,9 @@ class Parser():
             self.build_tree("@", 3)
 
     def R(self):
-        # print("R", self.input_stream.peek().value)
+        if self.debug:
+            print("R", self.input_stream.peek().value)
+
         self.Rn()
         while self.input_stream.peek() is not None and (self.input_stream.peek().type == "IDENTIFIER" or self.input_stream.peek().type == "INTEGER" or self.input_stream.peek().type == "STRING" or self.input_stream.peek().value == "nil" or self.input_stream.peek().value == "dummy" or self.input_stream.peek().value == "true" or self.input_stream.peek().value == "false" or self.input_stream.peek().type == "left_bracket"):
             self.Rn()
@@ -261,7 +290,9 @@ class Parser():
 
 
     def Rn(self):
-        # print("Rn", self.input_stream.peek().value, self.input_stream.peek().type)
+        if self.debug:
+            print("Rn", self.input_stream.peek().value, self.input_stream.peek().type)
+
         if self.input_stream.peek().type == "IDENTIFIER":
             self.read(type_check=True, type_="IDENTIFIER")
 
@@ -297,7 +328,9 @@ class Parser():
 
 
     def D(self):
-        # print("D", self.input_stream.peek().value)
+        if self.debug:
+            print("D", self.input_stream.peek().value)
+
         self.Da()
 
         if self.input_stream.peek().value == "within":
@@ -308,7 +341,9 @@ class Parser():
         
 
     def Da(self):
-        # print("Da", self.input_stream.peek().value)
+        if self.debug:
+            print("Da", self.input_stream.peek().value)
+
         self.Dr()
         if self.input_stream.peek().value == "and":
             self.read("and")
@@ -321,7 +356,9 @@ class Parser():
             self.build_tree("and", n)
         
     def Dr(self):
-        # print("Dr", self.input_stream.peek().value)
+        if self.debug:
+            print("Dr", self.input_stream.peek().value)
+
         if self.input_stream.peek().value =="rec":
             self.read("rec")
             self.Db()
@@ -332,7 +369,9 @@ class Parser():
             raise Exception(f"Expected rec or IDENTIFIER or left_bracket but got {self.input_stream.peek().value}")
 
     def Db(self):
-        # print("Db", self.input_stream.peek().value)
+        if self.debug:
+            print("Db", self.input_stream.peek().value)
+
         if self.input_stream.peek().type == "IDENTIFIER":
             print(self.input_stream.peek(index=1))
             if self.input_stream.peek(index=1).type == "IDENTIFIER" or self.input_stream.peek(index=1).value == "(":
@@ -347,7 +386,7 @@ class Parser():
                 self.build_tree("function_form", n+1)
                 # print("Db -> Vb+ = E")
             elif self.input_stream.peek(index=1).value == "=" or self.input_stream.peek(index=1).value == ",":
-                self.read(type_check=True, type_="IDENTIFIER")
+                # self.read(type_check=True, type_="IDENTIFIER")
                 self.Vl()
                 self.read("=")
                 self.E()
@@ -363,7 +402,9 @@ class Parser():
         
 
     def Vb(self):
-        # print("Vb", self.input_stream.peek().value)
+        if self.debug:
+            print("Vb", self.input_stream.peek().value)
+
         if self.input_stream.peek().type == "IDENTIFIER":
             self.read(type_check=True, type_="IDENTIFIER")
         elif self.input_stream.peek().value == "(":
@@ -378,7 +419,9 @@ class Parser():
             raise Exception(f"Expected IDENTIFIER or ( but got {self.input_stream.peek().value}")
         
     def Vl(self):
-        # print("Vl", self.input_stream.peek().value)
+        if self.debug:
+            print("Vl", self.input_stream.peek().value)
+            
         if self.input_stream.peek().type == "IDENTIFIER":
             n = 1
             self.read(type_check=True, type_="IDENTIFIER")
