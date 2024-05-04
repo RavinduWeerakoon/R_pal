@@ -59,6 +59,12 @@ class ST_node:
             gam = ST_node("gamma", gam1, x)
         return gam
     
+    @staticmethod
+    def parse_multiple_lambda(V,E):
+        lamb = E 
+        for n in V[::-1]:
+            lamb = ST_node("lambda", n, lamb)
+        return lamb
 
 
 
@@ -112,12 +118,20 @@ class Standard_tree:
             return x
         elif child.name == "tau":
             return ST_node.tau(child.children)
+        elif child.name == "lambda":
+            return ST_node.parse_multiple_lambda(child.children[:-1], child.children[-1])
+
+
 
             
     def parse_tree(self):
         self.create_tree(self.root)
-        self.root = self.parse_node(self.root)
+        ch = self.root 
+        if ch.name == "gamma":
+            self.root = ST_node("gamma", ch.children[0], ch.children[1])
         return self.root
+        
+        
 
             
             

@@ -38,7 +38,7 @@ class Parser():
         return self.stack.pop()
     
     def print_stack(self):
-        root = self.stack.pop()
+        root = self.stack.stack[-1]
         root.print_node()
     
 

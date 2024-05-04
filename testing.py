@@ -12,7 +12,7 @@ def print_tree(root):
 class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
-        l = Lex("""Print (1, (2,3), 4)""")
+        l = Lex("""Print(1,2,3)""")
 
 
         l.tokenize()
@@ -29,10 +29,12 @@ class TestStringMethods(unittest.TestCase):
         
         p = Parser(input_stream)
         p.parse()
-        #p.print_stack()
+        # p.print_stack()
         root = Standard_tree(p.stack.pop())
         x = root.parse_tree()
-        print_tree(x)
+        print("......", type(x))
+        
+        
 
 
 if __name__ == '__main__':
