@@ -144,6 +144,9 @@ class Standard_tree:
             return ST_node.tau(child.children)
         elif child.name == "lambda":
             return ST_node.parse_multiple_lambda(child.children[:-1], child.children[-1])
+        
+        elif child.name in ["neg", "not"]:
+            return ST_node("gamma", ST_node(child.name), child.children[0])
 
             
     def parse_tree(self):
