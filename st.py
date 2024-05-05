@@ -121,6 +121,16 @@ class Standard_tree:
         elif child.name == "lambda":
             return ST_node.parse_multiple_lambda(child.children[:-1], child.children[-1])
 
+        elif child.name == "within":
+            lamb = ST_node("lambda", child.children[0].left, child.children[1].right)
+            gam = ST_node("gamma", lamb, child.children[0].right)
+            return ST_node("=", child.children[1].left, gam)
+        elif child.name in ["neg", "not"]:
+            return ST_node("gamma", ST_node(child.name), child.children[0])
+
+
+        
+
 
 
             
@@ -129,6 +139,8 @@ class Standard_tree:
         ch = self.root 
         if ch.name == "gamma":
             self.root = ST_node("gamma", ch.children[0], ch.children[1])
+        else:
+            self.root = self.parse_node(ch)
         return self.root
         
         
