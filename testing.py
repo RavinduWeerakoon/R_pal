@@ -3,8 +3,10 @@ from lex import Lex
 from queue_ import Queue
 from parser_ import Parser
 from st import Standard_tree
+from node import Node
 def print_tree(root):
     if root:
+
         print(root.name)
         print_tree(root.left)
         print_tree(root.right)
@@ -12,7 +14,7 @@ def print_tree(root):
 class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
-        l = Lex("""not -x + y / 3 > z""")
+        l = Lex("""let x = 3 and y =2 in x + y""")
 
 
         l.tokenize()
@@ -29,11 +31,11 @@ class TestStringMethods(unittest.TestCase):
         
         p = Parser(input_stream)
         p.parse()
-        # p.print_stack()
+        p.print_stack()
         root = Standard_tree(p.stack.pop())
         # x = root.parse_tree()
 
-        print_tree(x)
+        # print_tree(x)
         
         
         

@@ -22,13 +22,31 @@ class ST_node:
     def __repr__(self):
         return self.name
     def __str__(self) -> str:
-        return self.name 
+        return self.name
+
+  
     
     @staticmethod
     def let(x,p,e):
-        lamb = ST_node("lambda", x, p)
-        gam = ST_node("gamma", lamb, e)
-        return gam
+        #has to handle this if lambda is comming through a converison and we have to parse the "com" comming from the sim def
+        #posible error could arrive from this pls check
+        if x.name == "com":
+
+            gam = p
+
+            for n in range(len(x.children)-1,-1,-1):
+                gam1 = ST_node("gamma", ST_node("temp"),ST_node(str(n)))
+                lamb = ST_node("lambda", x.children[n], gam)
+                gam = ST_node("gamma", lamb, gam1)
+            
+            lamb = ST_node("lambda", ST_node("temp"), gam)
+            gam = ST_node("gamma", lamb, e)
+            return gam
+
+        else:
+            lamb = ST_node("lambda", x, p)
+            gam = ST_node("gamma", lamb, e)
+            return gam
 
     @staticmethod
     def where(x,p,e):
@@ -95,6 +113,24 @@ class Standard_tree:
                     node.children[n] = ST_node("=", child.children[0], child.children[1])
                 elif child.name == 'gamma':
                     node.children[n] = ST_node("gamma", child.children[0], child.children[1])
+                elif child.name == 'and' and all(x.name == '=' for x in child.children):
+                    
+                    tau = Node("tau")
+                    tau.children = [x.right for x in child.children]
+                    parsed_tau = self.parse_node(tau)
+                    
+                    com = Node("com")
+                    com.children = [x.left for x in child.children]
+
+                    gam = parsed_tau
+
+
+                    node.children[n] = ST_node("=", com, parsed_tau)
+
+
+
+
+
                 else:
                     node.children[n] = self.parse_node(child)
 
@@ -127,6 +163,17 @@ class Standard_tree:
             return ST_node("=", child.children[1].left, gam)
         elif child.name in ["neg", "not"]:
             return ST_node("gamma", ST_node(child.name), child.children[0])
+        elif child.name == "@":
+            gam = ST_node("gamma", child.children[1], child.children[0])
+            gam = ST_node("gamma", gam, child.children[2])
+            return gam
+        elif child.name == "rec":
+            lamb = ST_node("lambda", child.children[0], child.children[1])
+            gam = ST_node("gamma", ST_node("ystar"), lamb)
+            return ST_node("=", child.children[0], gam)
+
+
+    
 
 
         
