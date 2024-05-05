@@ -26,6 +26,12 @@ class ST_node:
 
   
     
+    def print_st_node(self, level=0):
+        print("."*level + self.name)
+        for child in (self.left, self.right):
+            if child is not None:
+                child.print_st_node(level+1)
+    
     @staticmethod
     def let(x,p,e):
         #has to handle this if lambda is comming through a converison and we have to parse the "com" comming from the sim def
@@ -59,6 +65,7 @@ class ST_node:
         gam2 = ST_node("gamma", ST_node(op), E1)
         gam1 = ST_node("gamma", gam2, E2)
         return gam1
+    
     @staticmethod
     def fcn_form(p,v,E):
         lamb = ST_node("lambda", v[-1], E)
@@ -68,6 +75,15 @@ class ST_node:
             
         return ST_node("=",p, lamb) 
     
+
+    @staticmethod
+    def within(x1, e1, x2, e2):
+        lamb = ST_node("lambda", x1, e2)
+        gamma = ST_node("gamma", lamb, e1)
+        eq = ST_node("=", x2, gamma)
+
+        return eq
+
     @staticmethod
     def tau(lst):
         gam = ST_node("nil")
@@ -138,7 +154,10 @@ class Standard_tree:
 
     def parse_node(self,child):
         #print(child.name, child.children)
-        if child.name == "let":
+        if child.name == "gamma":
+            return ST_node("gamma", child.children[0], child.children[1])
+        
+        elif child.name == "let":
             #since = is a converted one
             return ST_node.let(child.children[0].left, child.children[1], child.children[0].right)
 
@@ -152,15 +171,16 @@ class Standard_tree:
             x = ST_node.fcn_form(child.children[0], child.children[1:-1], child.children[-1])
             #print("from the fcn ............",x)
             return x
+        
+        elif child.name =="within":
+            x = ST_node.within(child.children[0].left, child.children[0].right, child.children[1].left, child.children[1].right)
+            return x
+
         elif child.name == "tau":
             return ST_node.tau(child.children)
         elif child.name == "lambda":
             return ST_node.parse_multiple_lambda(child.children[:-1], child.children[-1])
-
-        elif child.name == "within":
-            lamb = ST_node("lambda", child.children[0].left, child.children[1].right)
-            gam = ST_node("gamma", lamb, child.children[0].right)
-            return ST_node("=", child.children[1].left, gam)
+        
         elif child.name in ["neg", "not"]:
             return ST_node("gamma", ST_node(child.name), child.children[0])
         elif child.name == "@":
@@ -175,35 +195,15 @@ class Standard_tree:
 
     
 
-
-        
-
-
-
             
     def parse_tree(self):
         self.create_tree(self.root)
-        ch = self.root 
-        if ch.name == "gamma":
-            self.root = ST_node("gamma", ch.children[0], ch.children[1])
-        else:
-            self.root = self.parse_node(ch)
-        return self.root
-        
-        
-
-            
-            
-
-           
-            
-
-
-
-
-
-        
-
-
-
+        # ch = self.root
+        self.root = self.parse_node(self.root)
+        # if ch.name == "gamma":
+        #     self.root = ST_node("gamma", ch.children[0], ch.children[1])
+        return self
     
+    def print_tree(self):
+        print("\n\nStandardized Tree..")
+        self.root.print_st_node()

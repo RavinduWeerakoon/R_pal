@@ -14,7 +14,10 @@ def print_tree(root):
 class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
-        l = Lex("""let x = 3 and y =2 in x + y""")
+        # l = Lex("""Print(1,2,3)""")
+        # l = Lex("""let x=5 in let y=3 in x+y""")
+        # l = Lex("""let c = 3 within f x = x + c in f 2""")
+        l = Lex("""not -x + y / 3 > z""")
 
 
         l.tokenize()
@@ -32,12 +35,9 @@ class TestStringMethods(unittest.TestCase):
         p = Parser(input_stream)
         p.parse()
         p.print_stack()
-        root = Standard_tree(p.stack.pop())
-        # x = root.parse_tree()
-
-        # print_tree(x)
-        
-        
+        st_tree = Standard_tree(p.stack.pop())
+        st_tree = st_tree.parse_tree()
+        st_tree.print_tree()
         
         
 
