@@ -220,7 +220,8 @@ class Parser():
             print("A", self.input_stream.peek().value)
 
         if self.input_stream.peek() is not None:
-            if self.input_stream.peek().value == "+":
+            
+            if self.input_stream.peek().value=="+" and self.input_stream.peek().value(index=2) not in ["+","-"]:
                 self.read("+")
                 self.At()
 
@@ -231,15 +232,16 @@ class Parser():
     
             else:
                 self.At()
-                while self.input_stream.peek() is not None and self.input_stream.peek().value in ["+", '-']:
-                    if self.input_stream.peek().value == "+":
-                        self.read("+")
-                        self.At()
-                        self.build_tree("+", 2)
-                    elif self.input_stream.peek().value == "-":
-                        self.read("-")
-                        self.At()
-                        self.build_tree("-", 2)
+            
+            while self.input_stream.peek() is not None and self.input_stream.peek().value in ["+", '-']:
+                if self.input_stream.peek().value == "+":
+                    self.read("+")
+                    self.At()
+                    self.build_tree("+", 2)
+                elif self.input_stream.peek().value == "-":
+                    self.read("-")
+                    self.At()
+                    self.build_tree("-", 2)
 
 
     def At(self):

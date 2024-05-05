@@ -47,6 +47,7 @@ class ST_node:
         gam2 = ST_node("gamma", ST_node(op), E1)
         gam1 = ST_node("gamma", gam2, E2)
         return gam1
+    
     @staticmethod
     def fcn_form(p,v,E):
         lamb = ST_node("lambda", v[-1], E)
