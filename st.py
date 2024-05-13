@@ -165,7 +165,8 @@ class Standard_tree:
             return ST_node.where(child.children[1].left, child.children[1].right, child.children[0])
         
         elif child.name in ["aug", "or", "&", "+", "-", "/", "**", "gr", "ge", "ls", "le"]:
-            return ST_node.op(child.name, child.children[0], child.children[1])
+            # return ST_node.op(child.name, child.children[0], child.children[1])
+            return ST_node(child.name, child.children[0], child.children[1])
         
         elif child.name == "function_form":
             x = ST_node.fcn_form(child.children[0], child.children[1:-1], child.children[-1])

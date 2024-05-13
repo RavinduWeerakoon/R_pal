@@ -14,9 +14,9 @@ class Stack():
     def is_empty(self):
         return len(self.stack) == 0
     
-    def peek(self):
-        if not self.is_empty():
-            return self.stack[-1]
+    def peek(self, index=0):
+        if len(self.stack) >= index + 1:
+            return self.stack[-1-index]
         else:
             return None
         
