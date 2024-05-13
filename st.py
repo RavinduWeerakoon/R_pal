@@ -150,7 +150,7 @@ class Standard_tree:
                 else:
                     node.children[n] = self.parse_node(child)
 
-            print(f"{node.name}....",node.children)
+            # print(f"{node.name}....",node.children)
 
     def parse_node(self,child):
         #print(child.name, child.children)

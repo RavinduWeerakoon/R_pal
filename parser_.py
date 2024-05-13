@@ -38,6 +38,7 @@ class Parser():
         return self.stack.pop()
     
     def print_stack(self):
+        print("\nAbstract Syntax Tree: ")
         root = self.stack.stack[-1]
         root.print_node()
     
