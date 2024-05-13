@@ -12,8 +12,9 @@ from token_ import Token
     #             raise Exception(f"Invalid Child Type, {child}")
 
 class ST_node:
-    def __init__(self, name, left=None, right=None):
+    def __init__(self, name, left=None, right=None, value=None):
         self.name = name
+        self.value = value
         if type(self.name) != str:
             raise Exception(f"Invalid Name Type, {self.name}, {type(self.name)}")
         self.left = left
@@ -108,7 +109,6 @@ class Standard_tree:
 
 
     def create_tree(self, node):
-        
         for n in range(len(node.children)):
             
             child = node.children[n]
@@ -118,7 +118,7 @@ class Standard_tree:
             
             if type(child) == Token:
                 #print("--------------------", child, type(child.value))
-                node.children[n] = ST_node(child.value)
+                node.children[n] = ST_node(name=child.type, value=child.value)
                 
             
             
@@ -198,10 +198,7 @@ class Standard_tree:
             
     def parse_tree(self):
         self.create_tree(self.root)
-        # ch = self.root
         self.root = self.parse_node(self.root)
-        # if ch.name == "gamma":
-        #     self.root = ST_node("gamma", ch.children[0], ch.children[1])
         return self
     
     def print_tree(self):

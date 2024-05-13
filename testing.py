@@ -16,8 +16,8 @@ class TestStringMethods(unittest.TestCase):
     def test_lex(self):
         # l = Lex("""Print(1,2,3)""")
         # l = Lex("""let x=5 in let y=3 in x+y""")
-        # l = Lex("""let c = 3 within f x = x + c in f 2""")
-        l = Lex("""not -x + y / 3 > z""")
+        l = Lex("""let c = 3 within f x = x + c in f 2""")
+        # l = Lex("""not -x + y / 3 > z""")
 
 
         l.tokenize()
