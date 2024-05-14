@@ -22,7 +22,12 @@ class CSE:
 
         # Setup environment
         primitive_env = env_node(index=0)
-        # primitive_env.add_assignment()
+
+        # Add a definition for Print to the primitive environment
+        # Print will be assigned to a node of type Print
+        # When the identifier Print is encountered, the node of type Print will be pushed to the stack
+        # When gamma operation is encountered, the Print node will print the preceding node of the stack
+        primitive_env.add_assignment("Print", Stack_node("Print"))
         self.envs = [primitive_env]
 
 
@@ -53,24 +58,47 @@ class CSE:
             delta.push(Delta_node("gamma"))
             self.st_to_cse(st_node.left, index)
             self.st_to_cse(st_node.right, index)
+        elif st_node.name == "->":
+            # Add the beta node to the delta
+            delta.push(Delta_node.create_beta(self.increment_delta_index()))
+            # Add the conditional expression to the delta
+            self.st_to_cse(st_node.left, index)
+            #Truthy Expression
+            self.deltas.append(Delta())
+            self.st_to_cse(st_node.mid, self.delta_index)
+            #Falsey Expression
+            self.deltas.append(Delta())
+            self.st_to_cse(st_node.right, self.increment_delta_index())
+
+            # Clarification - Beta node will only store one index
+            # However there are two deltas that are created for the true and false expressions
+            # If the conditional is true, delta[index] will be executed
+            # If the conditional is false, delta[index+1] will be executed
+            # This is implmented in the CSE operate function
+
         elif st_node.name == "IDENTIFIER":
             delta.push(Delta_node("identifier", value=st_node.value))
         elif st_node.name == "INTEGER":
             delta.push(Delta_node("INTEGER", value=st_node.value))
         elif st_node.name == "BOOLEAN":
             delta.push(Delta_node("BOOLEAN", value=st_node.value))
+        elif st_node.name == "STRING":
+            delta.push(Delta_node("STRING", value=st_node.value))
         elif st_node.name == "nil":
             delta.push(Delta_node("nil"))
-        elif st_node.name == "aug":
-            delta.push(Delta_node("aug"))
+        # elif st_node.name == "aug":
+        #     delta.push(Delta_node("aug"))
         elif st_node.name == "true":
             delta.push(Delta_node("true", value=True))
         elif st_node.name == "false":
             delta.push(Delta_node("false", value=False))
-        elif st_node.name in ["aug", "or", "&", "+", "-", "/", "**", "gr", "ge", "ls", "le"]:
+        elif st_node.name in ["aug", "or", "&", "+", "-", "/", "**", "<", "<=", ">", ">=", "gr", "ge", "ls", "le", "eq"]:
             delta.push(Delta_node("OPERATOR", value=st_node.name))
             self.st_to_cse(st_node.left, index)
             self.st_to_cse(st_node.right, index)
+        elif st_node.name == "not" or st_node.name == "neg":
+            delta.push(Delta_node("UNARY_OPERATOR", value=st_node.name))
+            self.st_to_cse(st_node.left, index)
         else:
             raise Exception(f"Invalid ST_node {st_node.name}")
         
@@ -112,8 +140,8 @@ class CSE:
                 self.stack.push(lambda_stack_node)
 
             elif control_element.type == "gamma":
-                top_stack = self.stack.peek()
-                if top_stack.type == "lambda":
+                operand1 = self.stack.peek()
+                if operand1.type == "lambda":
                     # Pop the lambda node off the stack
                     lambda_node = self.stack.pop()
 
@@ -130,11 +158,40 @@ class CSE:
                     # Push the new env to the stack
                     self.stack.push(Stack_node.create_env(self.env_index))
 
-                elif top_stack.type == "eeta":
+                elif operand1.type == "eeta":
                     raise Exception("Eeta not implemented")
+                
+                elif operand1.type == "Print":
+                    self.stack.pop()
+                    # THIS IS THE ACTUAL PRINT FUNCTION!!!
+                    print(self.stack.peek().value)
 
                 else:
                     raise Exception("Invalid gamma operation. No lambda / eeta on top of stack")
+                
+            elif control_element.type == "beta":
+                operand1 = self.stack.pop()
+                if operand1.type == "BOOLEAN":
+                    if operand1.value:
+                        self.control.push_delta(self.deltas[control_element.index])
+                    else:
+                        self.control.push_delta(self.deltas[control_element.index + 1])
+                else:
+                    raise Exception(f"Invalid top of stack for beta. Must be BOOLEAN got {operand1.type}")
+
+                
+            elif control_element.type == "UNARY_OPERATOR":
+                operand = self.stack.pop()
+                if control_element.value == "not":
+                    if operand.type != "BOOLEAN":
+                        raise Exception(f"Invalid Operand for NOT, must be BOOLEAN got {operand.type}")
+                    self.stack.push(Stack_node("BOOLEAN", not operand.value))
+                elif control_element.value == "neg":
+                    if operand.type != "INTEGER":
+                        raise Exception(f"Invalid Operand for NEG, must be INTEGER got {operand.type}")
+                    self.stack.push(Stack_node("INTEGER", -operand.value))
+                else:
+                    raise Exception(f"Invalid Unary Operator {control_element.value}")
             
 
             elif control_element.type == "OPERATOR":
@@ -155,21 +212,49 @@ class CSE:
                     self.stack.push(Stack_node("BOOLEAN", operand1.value and operand2.value))
                 elif control_element.value == "or":
                     self.stack.push(Stack_node("BOOLEAN", operand1.value or operand2.value))
-                elif control_element.value == "gr":
+                elif control_element.value == "gr" or control_element.value == ">":
                     self.stack.push(Stack_node("BOOLEAN", operand1.value > operand2.value))
-                elif control_element.value == "ge":
+                elif control_element.value == "ge" or control_element.value == ">=":
                     self.stack.push(Stack_node("BOOLEAN", operand1.value >= operand2.value))
-                elif control_element.value == "ls":
+                elif control_element.value == "ls" or control_element.value == "<":
                     self.stack.push(Stack_node("BOOLEAN", operand1.value < operand2.value))
-                elif control_element.value == "le":
+                elif control_element.value == "le" or control_element.value == "<=":
                     self.stack.push(Stack_node("BOOLEAN", operand1.value <= operand2.value))
+                elif control_element.value == "eq":
+                    self.stack.push(Stack_node("BOOLEAN", operand1.value == operand2.value))
+                elif control_element.value == "ne":
+                    self.stack.push(Stack_node("BOOLEAN", operand1.value != operand2.value))
+                elif control_element.value == "aug":
+                    if operand1.type == "Tuple":
+                        if operand2.type == "nil":
+                            self.stack.push(operand1)
+                        else:
+                            new_tuple = (operand2.value,) + operand1.value
+                            self.stack.push(Stack_node("Tuple", new_tuple))
+                    else:
+                        if operand2.type == "nil":
+                            self.stack.push(operand1)
+                        elif operand2.type == "Tuple":
+                            new_tuple = operand2.value +  (operand1.value,)
+                            self.stack.push(Stack_node("Tuple", new_tuple))
+                        else:
+                            new_tuple = (operand2.value, operand1.value)
+                            self.stack.push(Stack_node("Tuple", new_tuple))
                 else:
                     raise Exception(f"Invalid Operator {control_element.value}")
 
 
+            elif control_element.type == "nil":
+                self.stack.push(Stack_node("nil"))
 
             elif control_element.type == "INTEGER":
                 self.stack.push(Stack_node("INTEGER", int(control_element.value)))
+
+            elif control_element.type == "BOOLEAN":
+                self.stack.push(Stack_node("BOOLEAN", control_element.value))
+            
+            elif control_element.type == "STRING":
+                self.stack.push(Stack_node("STRING", control_element.value))
 
             # Get the next control element
             control_element = self.control.pop()

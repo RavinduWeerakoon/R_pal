@@ -36,6 +36,13 @@ class Delta_node():
             env_node.set_index(index)
             return env_node
 
+        @staticmethod
+        def create_beta(index):
+            beta_node = Delta_node("beta")
+            beta_node.set_index(index)
+            return beta_node
+        
+
 
 class Delta():
     """

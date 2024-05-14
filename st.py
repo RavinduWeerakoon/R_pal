@@ -19,6 +19,10 @@ class ST_node:
             raise Exception(f"Invalid Name Type, {self.name}, {type(self.name)}")
         self.left = left
         self.right = right
+        self.mid = None # Will be used for ->
+
+    def set_mid(self, mid):
+        self.mid = mid
 
     def __repr__(self):
         return self.name
@@ -28,8 +32,8 @@ class ST_node:
   
     
     def print_st_node(self, level=0):
-        print("."*level + self.name)
-        for child in (self.left, self.right):
+        print("."*level + self.name, self.value)
+        for child in (self.left, self.mid, self.right):
             if child is not None:
                 child.print_st_node(level+1)
     
@@ -71,7 +75,7 @@ class ST_node:
     def fcn_form(p,v,E):
         lamb = ST_node("lambda", v[-1], E)
 
-        for n in v[:-1:-1]:
+        for n in reversed(v[:-1]):
             lamb = ST_node("lambda", n, lamb)
             
         return ST_node("=",p, lamb) 
@@ -87,12 +91,16 @@ class ST_node:
 
     @staticmethod
     def tau(lst):
-        gam = ST_node("nil")
+        aug = ST_node("nil")
 
         for x in lst:
-            gam1 = ST_node("gamma",ST_node("aug"), gam)
-            gam = ST_node("gamma", gam1, x)
-        return gam
+            # gam1 = ST_node("gamma",ST_node("aug"), gam)
+            # gam = ST_node("gamma", gam1, x)
+
+            aug = ST_node("aug", x, aug)
+
+
+        return aug
     
     @staticmethod
     def parse_multiple_lambda(V,E):
@@ -100,6 +108,12 @@ class ST_node:
         for n in V[::-1]:
             lamb = ST_node("lambda", n, lamb)
         return lamb
+    
+    @staticmethod
+    def ternary(B, T, F): # The "->" node
+        ternary_node = ST_node("->", B, F)
+        ternary_node.set_mid(T)
+        return ternary_node
 
 
 
@@ -164,13 +178,16 @@ class Standard_tree:
         elif child.name == "where":
             return ST_node.where(child.children[1].left, child.children[1].right, child.children[0])
         
-        elif child.name in ["aug", "or", "&", "+", "-", "/", "**", "gr", "ge", "ls", "le"]:
+        elif child.name in ["aug", "or", "&", "+", "-", "/", "**", "gr", "ge", "ls", "le", "<", "<=", ">", ">=", "eq"]:
             # return ST_node.op(child.name, child.children[0], child.children[1])
             return ST_node(child.name, child.children[0], child.children[1])
         
         elif child.name == "function_form":
-            x = ST_node.fcn_form(child.children[0], child.children[1:-1], child.children[-1])
-            #print("from the fcn ............",x)
+            print("from the fcn ............", child.children[1])
+            if child.children[1].name == ",":
+                x = ST_node.fcn_form(child.children[0], child.children[1].children, child.children[2])
+            else:
+                x = ST_node.fcn_form(child.children[0], child.children[1:-1], child.children[-1])
             return x
         
         elif child.name =="within":
@@ -183,7 +200,8 @@ class Standard_tree:
             return ST_node.parse_multiple_lambda(child.children[:-1], child.children[-1])
         
         elif child.name in ["neg", "not"]:
-            return ST_node("gamma", ST_node(child.name), child.children[0])
+            # return ST_node("gamma", ST_node(child.name), child.children[0])
+            return ST_node(child.name, child.children[0])
         elif child.name == "@":
             gam = ST_node("gamma", child.children[1], child.children[0])
             gam = ST_node("gamma", gam, child.children[2])
@@ -192,8 +210,15 @@ class Standard_tree:
             lamb = ST_node("lambda", child.children[0], child.children[1])
             gam = ST_node("gamma", ST_node("ystar"), lamb)
             return ST_node("=", child.children[0], gam)
-
-
+        elif child.name == "->":
+            return ST_node.ternary(child.children[0], child.children[1], child.children[2])
+        
+        elif child.name == ",":
+            # , node is not standardized
+            # The children are extracted within the function_form of the parent of the , node
+            # Other uses of , may need to be handle
+            # POSSIBLE ERROR: If the , node is not a child of function_form this may lead to unexpected results
+            return child
     
 
             
