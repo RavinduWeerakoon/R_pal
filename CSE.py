@@ -92,13 +92,15 @@ class CSE:
             delta.push(Delta_node("true", value=True))
         elif st_node.name == "false":
             delta.push(Delta_node("false", value=False))
-        elif st_node.name in ["aug", "or", "&", "+", "-", "/", "**", "<", "<=", ">", ">=", "gr", "ge", "ls", "le", "eq"]:
+        elif st_node.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "<", "<=", ">", ">=", "gr", "ge", "ls", "le", "eq"]:
             delta.push(Delta_node("OPERATOR", value=st_node.name))
             self.st_to_cse(st_node.left, index)
             self.st_to_cse(st_node.right, index)
         elif st_node.name == "not" or st_node.name == "neg":
             delta.push(Delta_node("UNARY_OPERATOR", value=st_node.name))
             self.st_to_cse(st_node.left, index)
+        elif st_node.name == "ystar":
+            delta.push(Delta_node("ystar"))
         else:
             raise Exception(f"Invalid ST_node {st_node.name}")
         
@@ -158,9 +160,21 @@ class CSE:
                     # Push the new env to the stack
                     self.stack.push(Stack_node.create_env(self.env_index))
 
+                elif operand1.type == "ystar":
+                    ystar_node = self.stack.pop()
+                    lambda_node = self.stack.pop()
+                    eeta_node = Stack_node.create_eeta(lambda_node.index, lambda_node.variable, lambda_node.env_index)
+                    self.stack.push(eeta_node)
+
                 elif operand1.type == "eeta":
-                    raise Exception("Eeta not implemented")
-                
+                    eeta_node = self.stack.pop()
+                    lambda_node = Stack_node.create_lambda(eeta_node.index, eeta_node.variable, eeta_node.env_index)
+                    self.stack.push(eeta_node)
+                    self.stack.push(lambda_node)
+
+                    self.control.push(Delta_node("gamma"))
+                    self.control.push(Delta_node("gamma"))
+
                 elif operand1.type == "Print":
                     self.stack.pop()
                     # THIS IS THE ACTUAL PRINT FUNCTION!!!
@@ -169,6 +183,9 @@ class CSE:
                 else:
                     raise Exception("Invalid gamma operation. No lambda / eeta on top of stack")
                 
+            elif control_element.type == "ystar":
+                self.stack.push(Stack_node("ystar"))
+
             elif control_element.type == "beta":
                 operand1 = self.stack.pop()
                 if operand1.type == "BOOLEAN":
@@ -178,7 +195,6 @@ class CSE:
                         self.control.push_delta(self.deltas[control_element.index + 1])
                 else:
                     raise Exception(f"Invalid top of stack for beta. Must be BOOLEAN got {operand1.type}")
-
                 
             elif control_element.type == "UNARY_OPERATOR":
                 operand = self.stack.pop()
@@ -193,7 +209,6 @@ class CSE:
                 else:
                     raise Exception(f"Invalid Unary Operator {control_element.value}")
             
-
             elif control_element.type == "OPERATOR":
                 operand1 = self.stack.pop()
                 operand2 = self.stack.pop()
@@ -206,6 +221,8 @@ class CSE:
                     self.stack.push(Stack_node("INTEGER", int(operand1.value * operand2.value)))
                 elif control_element.value == "/":
                     self.stack.push(Stack_node("INTEGER", int(operand1.value / operand2.value)))
+                elif control_element.value == "*":
+                    self.stack.push(Stack_node("INTEGER", int(operand1.value * operand2.value)))
                 elif control_element.value == "**":
                     self.stack.push(Stack_node("INTEGER", int(operand1.value ** operand2.value)))
                 elif control_element.value == "&":

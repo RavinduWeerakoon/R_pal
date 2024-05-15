@@ -178,7 +178,7 @@ class Standard_tree:
         elif child.name == "where":
             return ST_node.where(child.children[1].left, child.children[1].right, child.children[0])
         
-        elif child.name in ["aug", "or", "&", "+", "-", "/", "**", "gr", "ge", "ls", "le", "<", "<=", ">", ">=", "eq"]:
+        elif child.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "gr", "ge", "ls", "le", "<", "<=", ">", ">=", "eq"]:
             # return ST_node.op(child.name, child.children[0], child.children[1])
             return ST_node(child.name, child.children[0], child.children[1])
         
@@ -207,9 +207,9 @@ class Standard_tree:
             gam = ST_node("gamma", gam, child.children[2])
             return gam
         elif child.name == "rec":
-            lamb = ST_node("lambda", child.children[0], child.children[1])
+            lamb = ST_node("lambda", child.children[0].left, child.children[0].right)
             gam = ST_node("gamma", ST_node("ystar"), lamb)
-            return ST_node("=", child.children[0], gam)
+            return ST_node("=", child.children[0].left, gam)
         elif child.name == "->":
             return ST_node.ternary(child.children[0], child.children[1], child.children[2])
         

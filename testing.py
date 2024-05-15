@@ -19,7 +19,7 @@ class TestStringMethods(unittest.TestCase):
     def test_lex(self):
 
         ##### Testing
-        l = Lex("""let f(x,y) = x eq 2 -> 3 | 4 in f "sdfsd""sfsdf" """)
+        l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
 
         ##### WORKING on CSE!
         # l = Lex("""let x=5 in let y=3 in x+y""")
@@ -34,6 +34,7 @@ class TestStringMethods(unittest.TestCase):
 
         ##### NOT WORKING on CSE :(
         # rec not yet implemented :/
+        
 
 
         l.tokenize()    

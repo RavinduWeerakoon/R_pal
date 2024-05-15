@@ -124,7 +124,7 @@ class Stack_node():
     
     @staticmethod
     def create_eeta(index, variable, env_index):
-        eeta_node = Stack_node("lambda")
+        eeta_node = Stack_node("eeta")
         eeta_node.set_index(index)
         eeta_node.set_variable(variable)
         eeta_node.set_env(env_index)
