@@ -154,7 +154,7 @@ class env_node():
     # Add a variable assignment to the environment 
     #possible change is that wehen assigning multiple variables
     def add_assignment(self, variable, value):
-        print("varaible........",variable)
+        # print("+++++++ASSINGING VARIABLE: ",variable, value)
         if type(variable) == list:
             
             

@@ -56,7 +56,7 @@ class CSE:
         if st_node.name == "lambda":
             # lambda_delta_node = Delta_node("lambda", index=self.increment_index(), variable=st_node.left.value)
             #Ravindu-when we encounter multiple vars via "," node
-            print(st_node.left)
+            # print(st_node.left)
             if st_node.left.name == ",":
                 #adding the values of each varaibles
                 lambda_delta_node = Delta_node.create_lambda(self.increment_delta_index(), [s.value for s in st_node.left.children])
@@ -120,8 +120,8 @@ class CSE:
             #     self.st_to_cse(var, index)
 
         elif st_node.name == "tau":
-            t_node = Delta_node("tau")
-            delta.push(t_node)
+            tau_node = Delta_node("tau", value=len(st_node.children))
+            delta.push(tau_node)
             for child in st_node.children:
                 self.st_to_cse(child, index)
             
@@ -132,6 +132,7 @@ class CSE:
 
     def operate(self):
         if self.debug:
+            self.print_deltas()
             print("\nSTARTING CSE OPERATE()", self.control, "\n")
         control_element: Delta_node = self.control.pop()
 
@@ -176,10 +177,17 @@ class CSE:
                     # Create a new env and add the lambda variable to the new env
                     new_env = env_node(index=self.increment_env_index(), parent=self.envs[lambda_node.env_index])
 
-                    for v in lambda_node.variable:
+
+                    if len(lambda_node.variable) > 1:
+                        # Multiple variables in lambda
                         rand:Stack_node = self.stack.pop()
-                        new_env.add_assignment(v, rand)
-                    
+                        for i, var in enumerate(lambda_node.variable):
+                            new_env.add_assignment(var, rand.value[i])
+                    else:
+                        # Single variable in lambda
+                        rand = self.stack.pop()
+                        new_env.add_assignment(lambda_node.variable, rand)
+                        
                     self.envs.append(new_env)
 
                     # Push the new env to the control structure and push the delta to the control structure
@@ -193,7 +201,7 @@ class CSE:
                     ystar_node = self.stack.pop()
                     lambda_node = self.stack.pop()
                     eeta_node = Stack_node.create_eeta(lambda_node.index, lambda_node.variable, lambda_node.env_index)
-                    print("from ystart---", lambda_node.variable)
+                    # print("from ystar---", lambda_node.variable)
                     self.stack.push(eeta_node)
 
                 elif operand1.type == "eeta":
@@ -204,6 +212,27 @@ class CSE:
 
                     self.control.push(Delta_node("gamma"))
                     self.control.push(Delta_node("gamma"))
+
+                elif operand1.type == "Tuple":
+                    # When gamma is applied with a tuple on the stack,
+                    # The nth [actually n-1 in python] element 
+                    # of the tuple is pushed to the stack
+                    # n is an integer on the stack, after the tuple
+
+                    tuple_ = self.stack.pop()
+                    n = self.stack.pop()
+
+                    if type(tuple_.value) != tuple:
+                        raise Exception("Invalid top of stack for Tuple. Must be Tuple", tuple_.type, type(tuple_.value))
+                    
+                    if n.type != "INTEGER":
+                        raise Exception("Invalid index for tuple. Must be INTEGER")
+                    
+                    if n.value > len(tuple_.value):
+                        raise Exception("Invalid index for tuple. n > len(Tuple)")
+                    
+                    self.stack.push(tuple_.value[n.value - 1])
+                        
 
                 elif operand1.type == "Print":
                     self.stack.pop()
@@ -221,10 +250,20 @@ class CSE:
                         raise Exception(f"Invalid top of stack for Order. Must be Tuple or nil got {stack_node.type}")
 
                 else:
+                    # print("Invalid gamma operation. Operand1:", operand1.type)
                     raise Exception("Invalid gamma operation. No lambda / eeta on top of stack")
                 
             elif control_element.type == "ystar":
                 self.stack.push(Stack_node("ystar"))
+
+
+            elif control_element.type == "tau":
+                new_tuple = Stack_node("Tuple", tuple())
+                for i in range(control_element.value):
+                    rand = self.stack.pop()
+                    new_tuple.value =  new_tuple.value + (rand,)
+                self.stack.push(new_tuple)
+
 
             elif control_element.type == "beta":
                 operand1 = self.stack.pop()
@@ -319,8 +358,8 @@ class CSE:
             control_element = self.control.pop()
 
         else:
+            result = self.stack.pop().value
             if self.debug:
                 print("\nFinished Execution")
-                result = self.stack.pop().value
                 print("Result:", result)
             return result

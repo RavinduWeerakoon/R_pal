@@ -71,8 +71,8 @@ class ST_node:
     @staticmethod
     def fcn_form(p,v,E):
         if type(v) == ST_node:
-            print("This is for the comma node")
-            print('The Comma Node......', v.children)
+            # print("This is for the comma node")
+            # print('The Comma Node......', v.children)
             lamb = ST_node("lambda", v, E)
             return ST_node("=",p, lamb)
        
@@ -161,7 +161,7 @@ class Standard_tree:
                 else:
                     node.children[n] = self.parse_node(child)
 
-            print(f"{node.name}....",node.children)
+            # print(f"{node.name}....",node.children)
 
     def parse_node(self,child):
         #print(child.name, child.children)
