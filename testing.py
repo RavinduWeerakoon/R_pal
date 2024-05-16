@@ -23,7 +23,7 @@ class TestStringMethods(unittest.TestCase):
 
         ##### WORKING on CSE!
         # l = Lex("""let x=5 in let y=3 in x+y""")
-        # l = Lex("""let c = 3 within f x = x + c in f 2""")
+        #l = Lex("""let c = 3 within f x = x + c in f 2""")
         # l = Lex("""let f x = x eq 2 -> 3 | 4 in f 2""")
         # l = Lex("""let f x y = x eq 2 -> 3 | 4 in f 2 3""")
         # l = Lex("""let f x y = x eq y -> 3 | 4 in f "abc" "abc" """)

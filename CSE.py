@@ -169,6 +169,7 @@ class CSE:
                     ystar_node = self.stack.pop()
                     lambda_node = self.stack.pop()
                     eeta_node = Stack_node.create_eeta(lambda_node.index, lambda_node.variable, lambda_node.env_index)
+                    print("from ystart---", lambda_node.variable)
                     self.stack.push(eeta_node)
 
                 elif operand1.type == "eeta":

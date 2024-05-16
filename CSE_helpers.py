@@ -11,13 +11,17 @@ class Delta_node():
             self.type = type
             self.value = value
             self.index = None
-            self.variable = None
+            self.variable = []
 
         def set_index(self, index):
             self.index = index
 
         def set_variable(self, variable):
-            self.variable = variable
+            # self.variable.append(variable)
+            if type(variable) == list:
+                self.variable = variable
+            else:
+                self.variable.append(variable)
     
         def __str__(self):
             return f"Control_Node: {self.type} | Value : {self.value} | Index : {self.index}"
@@ -95,14 +99,17 @@ class Stack_node():
         self.type = type
         self.value = value
         self.index = None
-        self.variable = None
+        self.variable = []
         self.env_index = None
 
     def set_index(self, index):
         self.index = index
 
     def set_variable(self, variable):
-        self.variable = variable
+        if type(variable) == list:
+            self.variable = variable
+        else:
+            self.variable.append(variable)
 
     def set_env(self, env):
         self.env_index = env
@@ -143,9 +150,19 @@ class env_node():
         self.parent = parent
         self.assignments = {}
 
-    # Add a variable assignment to the environment
+    # Add a variable assignment to the environment 
+    #possible change is that wehen assigning multiple variables
     def add_assignment(self, variable, value):
-        self.assignments[variable] = value
+        print("varaible........",variable)
+        if type(variable) == list:
+            
+            
+            item = variable[-1] #removing the var from it if we need another var left in the var list
+            self.assignments[item] = value
+        else:
+            self.assignments[variable] = value
+
+
 
     # Get the value of a variable in the environment
     def get_assignment(self, variable):
