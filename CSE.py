@@ -28,6 +28,11 @@ class CSE:
         # When the identifier Print is encountered, the node of type Print will be pushed to the stack
         # When gamma operation is encountered, the Print node will print the preceding node of the stack
         primitive_env.add_assignment("Print", Stack_node("Print"))
+
+        # Same with the Order definition
+        # Will return the length (order) of the tuple when gamma is applied to Order on the stack
+        primitive_env.add_assignment("Order", Stack_node("Order"))
+
         self.envs = [primitive_env]
 
 
@@ -179,6 +184,16 @@ class CSE:
                     self.stack.pop()
                     # THIS IS THE ACTUAL PRINT FUNCTION!!!
                     print(self.stack.peek().value)
+
+                elif operand1.type == "Order":
+                    self.stack.pop()
+                    stack_node = self.stack.pop()
+                    if stack_node.type == "nil":
+                        self.stack.push(Stack_node("INTEGER", 0))
+                    elif stack_node.type == "Tuple":
+                        self.stack.push(Stack_node("INTEGER", len(stack_node.value)))
+                    else:
+                        raise Exception(f"Invalid top of stack for Order. Must be Tuple or nil got {stack_node.type}")
 
                 else:
                     raise Exception("Invalid gamma operation. No lambda / eeta on top of stack")
