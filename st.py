@@ -20,6 +20,7 @@ class ST_node:
         self.left = left
         self.right = right
         self.mid = None # Will be used for ->
+        self.children = None
 
     def set_mid(self, mid):
         self.mid = mid
@@ -32,10 +33,19 @@ class ST_node:
   
     
     def print_st_node(self, level=0):
-        print("."*level + self.name, self.value)
-        for child in (self.left, self.mid, self.right):
-            if child is not None:
-                child.print_st_node(level+1)
+        if self.children:
+            print("."*level + self.name)
+            for child in self.children:
+                if type(child) == ST_node:
+                    child.print_st_node(level+1)
+                else:
+                    print("."*(level+1) + str(child))
+            return
+        else:
+            print("."*level + self.name, self.value)
+            for child in (self.left, self.mid, self.right):
+                if child is not None:
+                    child.print_st_node(level+1)
     
     @staticmethod
     def let(x,p,e):
@@ -91,16 +101,19 @@ class ST_node:
 
     @staticmethod
     def tau(lst):
-        aug = ST_node("nil")
+        # aug = ST_node("nil")
 
-        for x in lst:
+        # for x in lst:
             # gam1 = ST_node("gamma",ST_node("aug"), gam)
             # gam = ST_node("gamma", gam1, x)
 
-            aug = ST_node("aug", x, aug)
+        #     aug = ST_node("aug", x, aug)
 
 
-        return aug
+        # return aug
+        t_node = ST_node("tau")
+        t_node.children = lst
+        return t_node
     
     @staticmethod
     def parse_multiple_lambda(V,E):
@@ -183,7 +196,7 @@ class Standard_tree:
             return ST_node(child.name, child.children[0], child.children[1])
         
         elif child.name == "function_form":
-            print("from the fcn ............", child.children[1])
+            
             if child.children[1].name == ",":
                 x = ST_node.fcn_form(child.children[0], child.children[1].children, child.children[2])
             else:
@@ -218,7 +231,9 @@ class Standard_tree:
             # The children are extracted within the function_form of the parent of the , node
             # Other uses of , may need to be handle
             # POSSIBLE ERROR: If the , node is not a child of function_form this may lead to unexpected results
-            return child
+            com_node = ST_node(",")
+            com_node.children = child.children
+            return com_node
     
 
             

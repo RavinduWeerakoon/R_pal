@@ -106,6 +106,19 @@ class CSE:
             self.st_to_cse(st_node.left, index)
         elif st_node.name == "ystar":
             delta.push(Delta_node("ystar"))
+        elif st_node.name == ",":
+            vars = [s for s in st_node.children]
+            lambda_delta_node = Delta_node.create_lambda(self.increment_delta_index(), vars)
+            # for var in lambda_delta_node.variable:
+            #     self.st_to_cse(var, index)
+
+        elif st_node.name == "tau":
+            t_node = Delta_node("tau")
+            delta.push(t_node)
+            for child in st_node.children:
+                self.st_to_cse(child, index)
+            
+
         else:
             raise Exception(f"Invalid ST_node {st_node.name}")
         
@@ -146,6 +159,7 @@ class CSE:
                 lambda_stack_node = Stack_node.create_lambda(index=control_element.index, variable=control_element.variable, env_index=current_env)
                 self.stack.push(lambda_stack_node)
 
+
             elif control_element.type == "gamma":
                 operand1 = self.stack.peek()
                 if operand1.type == "lambda":
@@ -154,8 +168,11 @@ class CSE:
 
                     # Create a new env and add the lambda variable to the new env
                     new_env = env_node(index=self.increment_env_index(), parent=self.envs[lambda_node.env_index])
-                    rand:Stack_node = self.stack.pop()
-                    new_env.add_assignment(lambda_node.variable, rand)
+
+                    for v in lambda_node.variable:
+                        rand:Stack_node = self.stack.pop()
+                        new_env.add_assignment(v, rand)
+                    
                     self.envs.append(new_env)
 
                     # Push the new env to the control structure and push the delta to the control structure
@@ -288,6 +305,8 @@ class CSE:
             
             elif control_element.type == "STRING":
                 self.stack.push(Stack_node("STRING", control_element.value))
+            
+            
 
             # Get the next control element
             control_element = self.control.pop()

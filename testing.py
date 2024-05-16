@@ -19,17 +19,18 @@ class TestStringMethods(unittest.TestCase):
     def test_lex(self):
 
         ##### Testing
-        l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
+        #l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
+        # l = Lex("(fn (x,y). x+y)(5,6)")
 
         ##### WORKING on CSE!
-        # l = Lex("""let x=5 in let y=3 in x+y""")
+        l = Lex("""let x=5 in let y=3 in x+y""")
         #l = Lex("""let c = 3 within f x = x + c in f 2""")
-        # l = Lex("""let f x = x eq 2 -> 3 | 4 in f 2""")
-        # l = Lex("""let f x y = x eq 2 -> 3 | 4 in f 2 3""")
-        # l = Lex("""let f x y = x eq y -> 3 | 4 in f "abc" "abc" """)
-        # l = Lex("""let f(x,y) = x eq 2 -> 3 | 4 in f "sdfsd""sfsdf" """)
-        # l = Lex("""let x = -6 in let y = 3 in let z = 2 in not -x + y / 3 > z""")
-        # l = Lex("""Print(1,2,3)""")
+        #l = Lex("""let f x = x eq 2 -> 3 | 4 in f 2""")
+        #l = Lex("""let f x y = x eq 2 -> 3 | 4 in f 2 3""")
+        #l = Lex("""let f x y = x eq y -> 3 | 4 in f "abc" "abc" """)
+        #l = Lex("""let f(x,y) = x eq 2 -> 3 | 4 in f "sdfsd""sfsdf" """)
+        #l = Lex("""let x = -6 in let y = 3 in let z = 2 in not -x + y / 3 > z""")
+        #l = Lex("""Print(1,2,3)""")
 
 
         ##### NOT WORKING on CSE :(
