@@ -55,7 +55,14 @@ class CSE:
         delta = self.deltas[index]
         if st_node.name == "lambda":
             # lambda_delta_node = Delta_node("lambda", index=self.increment_index(), variable=st_node.left.value)
-            lambda_delta_node = Delta_node.create_lambda(self.increment_delta_index(), st_node.left.value)
+            #Ravindu-when we encounter multiple vars via "," node
+            print(st_node.left)
+            if st_node.left.name == ",":
+                #adding the values of each varaibles
+                lambda_delta_node = Delta_node.create_lambda(self.increment_delta_index(), [s.value for s in st_node.left.children])
+                #print("From when , node ",st_node.left.children)
+            else:
+                lambda_delta_node = Delta_node.create_lambda(self.increment_delta_index(), st_node.left.value)
             delta.push(lambda_delta_node)
             self.deltas.append(Delta())
             self.st_to_cse(st_node.right, self.delta_index)

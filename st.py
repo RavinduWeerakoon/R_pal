@@ -49,30 +49,17 @@ class ST_node:
     
     @staticmethod
     def let(x,p,e):
-        #has to handle this if lambda is comming through a converison and we have to parse the "com" comming from the sim def
-        #posible error could arrive from this pls check
-        if x.name == "com":
 
-            gam = p
-
-            for n in range(len(x.children)-1,-1,-1):
-                gam1 = ST_node("gamma", ST_node("temp"),ST_node(str(n)))
-                lamb = ST_node("lambda", x.children[n], gam)
-                gam = ST_node("gamma", lamb, gam1)
-            
-            lamb = ST_node("lambda", ST_node("temp"), gam)
-            gam = ST_node("gamma", lamb, e)
-            return gam
-
-        else:
+         
             lamb = ST_node("lambda", x, p)
             gam = ST_node("gamma", lamb, e)
             return gam
 
     @staticmethod
     def where(x,p,e):
+
         lamb = ST_node("lambda", x, p)
-        gam = ST_node("gamma", e, lamb)
+        gam = ST_node("gamma", lamb, e)
         return gam
     
     @staticmethod
@@ -83,6 +70,12 @@ class ST_node:
     
     @staticmethod
     def fcn_form(p,v,E):
+        if type(v) == ST_node:
+            print("This is for the comma node")
+            print('The Comma Node......', v.children)
+            lamb = ST_node("lambda", v, E)
+            return ST_node("=",p, lamb)
+       
         lamb = ST_node("lambda", v[-1], E)
 
         for n in reversed(v[:-1]):
@@ -101,16 +94,7 @@ class ST_node:
 
     @staticmethod
     def tau(lst):
-        # aug = ST_node("nil")
 
-        # for x in lst:
-            # gam1 = ST_node("gamma",ST_node("aug"), gam)
-            # gam = ST_node("gamma", gam1, x)
-
-        #     aug = ST_node("aug", x, aug)
-
-
-        # return aug
         t_node = ST_node("tau")
         t_node.children = lst
         return t_node
@@ -177,7 +161,7 @@ class Standard_tree:
                 else:
                     node.children[n] = self.parse_node(child)
 
-            # print(f"{node.name}....",node.children)
+            print(f"{node.name}....",node.children)
 
     def parse_node(self,child):
         #print(child.name, child.children)
@@ -189,7 +173,7 @@ class Standard_tree:
             return ST_node.let(child.children[0].left, child.children[1], child.children[0].right)
 
         elif child.name == "where":
-            return ST_node.where(child.children[1].left, child.children[1].right, child.children[0])
+            return ST_node.where(child.children[1].left,child.children[0], child.children[1].right)
         
         elif child.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "gr", "ge", "ls", "le", "<", "<=", ">", ">=", "eq"]:
             # return ST_node.op(child.name, child.children[0], child.children[1])
@@ -198,7 +182,8 @@ class Standard_tree:
         elif child.name == "function_form":
             
             if child.children[1].name == ",":
-                x = ST_node.fcn_form(child.children[0], child.children[1].children, child.children[2])
+                # x = ST_node.fcn_form(child.children[0], child.children[1].children, child.children[2])
+                x = ST_node.fcn_form(child.children[0], child.children[1], child.children[2])
             else:
                 x = ST_node.fcn_form(child.children[0], child.children[1:-1], child.children[-1])
             return x
@@ -210,6 +195,7 @@ class Standard_tree:
         elif child.name == "tau":
             return ST_node.tau(child.children)
         elif child.name == "lambda":
+            #print("Parse multiple lambda called")
             return ST_node.parse_multiple_lambda(child.children[:-1], child.children[-1])
         
         elif child.name in ["neg", "not"]:
@@ -222,6 +208,7 @@ class Standard_tree:
         elif child.name == "rec":
             lamb = ST_node("lambda", child.children[0].left, child.children[0].right)
             gam = ST_node("gamma", ST_node("ystar"), lamb)
+        
             return ST_node("=", child.children[0].left, gam)
         elif child.name == "->":
             return ST_node.ternary(child.children[0], child.children[1], child.children[2])
@@ -231,6 +218,7 @@ class Standard_tree:
             # The children are extracted within the function_form of the parent of the , node
             # Other uses of , may need to be handle
             # POSSIBLE ERROR: If the , node is not a child of function_form this may lead to unexpected results
+
             com_node = ST_node(",")
             com_node.children = child.children
             return com_node
@@ -245,3 +233,4 @@ class Standard_tree:
     def print_tree(self):
         print("\n\nStandardized Tree..")
         self.root.print_st_node()
+        print("Done and Dusted\n\n")

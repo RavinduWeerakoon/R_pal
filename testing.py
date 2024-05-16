@@ -19,11 +19,17 @@ class TestStringMethods(unittest.TestCase):
     def test_lex(self):
 
         ##### Testing
+        l = Lex("(x+y where x=3) where y = 45")
         #l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
-        # l = Lex("(fn (x,y). x+y)(5,6)")
+        # l = Lex("""let Sum(A) = Psum (A,5)
+        #         where rec Psum (T,N) = N eq 0 -> 0
+        #         | Psum(T,N-1)+T N
+        #         in Print ( Sum (1,2,3,4,5) )""")
+        # l = Lex("let Sum(A) = Psum(A,2) where let Psum A B = A+B in Print Sum(2)")
+        # l = Lex("(fn (x,y,z). x+y+z)(5,6,7)")
 
         ##### WORKING on CSE!
-        l = Lex("""let x=5 in let y=3 in x+y""")
+        #l = Lex("""let x=5 in let y=3 in x+y""")
         #l = Lex("""let c = 3 within f x = x + c in f 2""")
         #l = Lex("""let f x = x eq 2 -> 3 | 4 in f 2""")
         #l = Lex("""let f x y = x eq 2 -> 3 | 4 in f 2 3""")
@@ -44,7 +50,7 @@ class TestStringMethods(unittest.TestCase):
         
         p = Parser(input_stream)
         p.parse()
-        p.print_stack()
+        #p.print_stack()
         st_tree = Standard_tree(p.stack.pop())
         st_tree = st_tree.parse_tree()
         st_tree.print_tree()

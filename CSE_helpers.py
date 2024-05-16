@@ -106,6 +106,7 @@ class Stack_node():
         self.index = index
 
     def set_variable(self, variable):
+        #Ravindu: handling the single variable case
         if type(variable) == list:
             self.variable = variable
         else:
