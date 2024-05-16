@@ -27,11 +27,26 @@ class CSE:
         # Print will be assigned to a node of type Print
         # When the identifier Print is encountered, the node of type Print will be pushed to the stack
         # When gamma operation is encountered, the Print node will print the preceding node of the stack
+        # Likewise for all the other primitive functions
         primitive_env.add_assignment("Print", Stack_node("Print"))
 
-        # Same with the Order definition
+        # Order definition
         # Will return the length (order) of the tuple when gamma is applied to Order on the stack
         primitive_env.add_assignment("Order", Stack_node("Order"))
+
+        # Conc function
+        # Will concatenate two strings
+        primitive_env.add_assignment("Conc", Stack_node("Conc"))
+
+        # Stern function
+        # Will return the string after the first character
+        primitive_env.add_assignment("Stern", Stack_node("Stern"))
+
+        # Stem function
+        # Will return the first character of the string
+        primitive_env.add_assignment("Stem", Stack_node("Stem"))
+
+
 
         self.envs = [primitive_env]
 
@@ -194,6 +209,32 @@ class CSE:
                         self.stack.push(Stack_node("INTEGER", len(stack_node.value)))
                     else:
                         raise Exception(f"Invalid top of stack for Order. Must be Tuple or nil got {stack_node.type}")
+                    
+
+                elif operand1.type == "Conc":
+                    conc = self.stack.pop()
+                    operand2 = self.stack.pop()
+                    operand1 = self.stack.pop()
+                    if operand1.type != "STRING" or operand2.type != "STRING":
+                        raise Exception(f"Invalid operands for Conc. Must be STRING got {operand1.type} and {operand2.type}")
+                    self.stack.push(Stack_node("STRING", operand1.value + operand2.value))
+
+                    # Pop off a second gamma from the control structure
+                    self.control.pop()
+
+                elif operand1.type == "Stern":
+                    stern = self.stack.pop()
+                    string = self.stack.pop()
+                    if string.type != "STRING":
+                        raise Exception(f"Invalid operand for Stern. Must be STRING got {string.type}")
+                    self.stack.push(Stack_node("STRING", string.value[1:]))
+
+                elif operand1.type == "Stem":
+                    stem = self.stack.pop()
+                    string = self.stack.pop()
+                    if string.type != "STRING":
+                        raise Exception(f"Invalid operand for Stern. Must be STRING got {string.type}")
+                    self.stack.push(Stack_node("STRING", string.value[1]))
 
                 else:
                     raise Exception("Invalid gamma operation. No lambda / eeta on top of stack")
@@ -286,7 +327,11 @@ class CSE:
                 self.stack.push(Stack_node("BOOLEAN", control_element.value))
             
             elif control_element.type == "STRING":
-                self.stack.push(Stack_node("STRING", control_element.value))
+                string = control_element.value
+                if string[0] == '"' and string[-1] == '"':
+                    self.stack.push(Stack_node("STRING", string[1:-1]))
+                else:
+                    raise Exception(f"Invalid STRING format {string}")
 
             # Get the next control element
             control_element = self.control.pop()

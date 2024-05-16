@@ -19,7 +19,7 @@ class TestStringMethods(unittest.TestCase):
     def test_lex(self):
 
         ##### Testing
-        l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
+        l = Lex("""let x = Stem "abc" in x""")
 
         ##### WORKING on CSE!
         # l = Lex("""let x=5 in let y=3 in x+y""")
@@ -30,6 +30,10 @@ class TestStringMethods(unittest.TestCase):
         # l = Lex("""let f(x,y) = x eq 2 -> 3 | 4 in f "sdfsd""sfsdf" """)
         # l = Lex("""let x = -6 in let y = 3 in let z = 2 in not -x + y / 3 > z""")
         # l = Lex("""Print(1,2,3)""")
+        # l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
+        # l = Lex("""let x = "abc" in Stern x""")
+        # l = Lex("""let x = Conc "abc" "def" in x""")
+        # l = Lex("""let x = Stem "abc" in x""")
 
 
         ##### NOT WORKING on CSE :(
