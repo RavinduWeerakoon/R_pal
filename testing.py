@@ -44,6 +44,10 @@ class TestStringMethods(unittest.TestCase):
         #         | Psum(T,N-1)+T N
         #         in Print ( Sum (1,2,3,4,5) )""")
         #########################################################################
+        # l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
+        # l = Lex("""let x = "abc" in Stern x""")
+        # l = Lex("""let x = Conc "abc" "def" in x""")
+        # l = Lex("""let x = Stem "abc" in x""")
 
 
         ##### NOT WORKING on CSE :(
