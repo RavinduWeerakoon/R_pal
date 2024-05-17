@@ -36,12 +36,12 @@ class FileParser:
 
     def parse_file(self):
 
-        p = Parser(self.lex())
+        p = Parser(self.lex(), debug=False)
         p.parse()
 
         st_tree = Standard_tree(p.stack.pop())
         st_tree = st_tree.parse_tree()
-        cse_machine = CSE(st_tree, debug=True)
+        cse_machine = CSE(st_tree, debug=False)
         cse_machine.print_deltas()
         cse_machine.operate()
 

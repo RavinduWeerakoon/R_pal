@@ -38,13 +38,13 @@ class Parser():
         return self.stack.pop()
     
     def print_stack(self):
-        print("\nAbstract Syntax Tree: ")
+        # print("\nAbstract Syntax Tree: ")
         root = self.stack.stack[-1]
         root.print_node()
     
 
     def build_tree(self, name, n):
-        print("Building tree", name, n)
+        # print("Building tree", name, n)
         node = Node(name)
         for _ in range(n):
             node.add_child(self.pop_from_stack())
@@ -379,7 +379,7 @@ class Parser():
             print("Db", self.input_stream.peek().value)
 
         if self.input_stream.peek().type == "IDENTIFIER":
-            print(self.input_stream.peek(index=1))
+            
             if self.input_stream.peek(index=1).type == "IDENTIFIER" or self.input_stream.peek(index=1).value == "(":
                 self.read(type_check=True, type_="IDENTIFIER")
                 self.Vb()

@@ -60,10 +60,11 @@ class CSE:
         return self.env_index
     
     def print_deltas(self):
-        print("\n")
-        print("PRINTING DELTAS: ")
-        for delta in self.deltas:
-            print(delta)
+        if self.debug:
+            print("\n")
+            print("PRINTING DELTAS: ")
+            for delta in self.deltas:
+                print(delta)
 
 
     def st_to_cse(self, st_node:ST_node, index=0):
