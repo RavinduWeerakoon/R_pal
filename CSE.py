@@ -289,7 +289,11 @@ class CSE:
                     string = self.stack.pop()
                     if string.type != "STRING":
                         raise Exception(f"Invalid operand for Stern. Must be STRING got {string.type}")
-                    self.stack.push(Stack_node("STRING", string.value[1]))
+                    
+                    if len(string.value) == 0:
+                        self.stack.push(Stack_node("STRING", ""))
+                    else:
+                        self.stack.push(Stack_node("STRING", string.value[0]))
 
                 else:
                     # print("Invalid gamma operation. Operand1:", operand1.type)
@@ -395,7 +399,7 @@ class CSE:
             
             elif control_element.type == "STRING":
                 string = control_element.value
-                if string[0] == '"' and string[-1] == '"':
+                if (string[0] == '"' and string[-1] == '"') or (string[0] == "'" and string[-1] == "'"):
                     self.stack.push(Stack_node("STRING", string[1:-1]))
                 else:
                     raise Exception(f"Invalid STRING format {string}")
