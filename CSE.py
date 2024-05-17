@@ -120,7 +120,7 @@ class CSE:
             delta.push(Delta_node("BOOLEAN", value=True))
         elif st_node.name == "false":
             delta.push(Delta_node("BOOLEAN", value=False))
-        elif st_node.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "<", "<=", ">", ">=", "gr", "ge", "ls", "le", "eq"]:
+        elif st_node.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "<", "<=", ">", ">=", "gr", "ge", "ls", "le", "eq", "ne"]:
             delta.push(Delta_node("OPERATOR", value=st_node.name))
             self.st_to_cse(st_node.left, index)
             self.st_to_cse(st_node.right, index)
