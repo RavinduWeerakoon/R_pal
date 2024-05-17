@@ -368,9 +368,11 @@ class CSE:
                         else:
                             new_tuple = (operand2.value,) + operand1.value
                             self.stack.push(Stack_node("Tuple", new_tuple))
+                    elif operand1.type == "nil":
+                        self.stack.push(Stack_node("Tuple", (operand2.value,)))
                     else:
                         if operand2.type == "nil":
-                            self.stack.push(operand1)
+                            self.stack.push(Stack_node("Tuple", (operand1.value,)))
                         elif operand2.type == "Tuple":
                             new_tuple = operand2.value +  (operand1.value,)
                             self.stack.push(Stack_node("Tuple", new_tuple))

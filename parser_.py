@@ -314,8 +314,9 @@ class Parser():
             self.build_tree("false", 1)
 
         elif self.input_stream.peek().value == "nil":
-            self.read("nil")
-            self.build_tree("nil", 1)
+            self.input_stream.peek().type = "nil"
+            self.read(type_check=True, type_="nil")
+            # self.build_tree("nil", 1)
             
         elif self.input_stream.peek().value == "(":
             self.read("(")
