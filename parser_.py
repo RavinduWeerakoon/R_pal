@@ -306,12 +306,14 @@ class Parser():
             self.read(type_check=True, type_="STRING")
         
         elif self.input_stream.peek().value == "true":
-            self.read("true")
-            self.build_tree("true", 1)
+            self.input_stream.peek().type = "BOOLEAN"
+            self.read(type_check=True, type_="BOOLEAN")
+            # self.build_tree("true", 1)
         
         elif self.input_stream.peek().value == "false":
-            self.read("false")
-            self.build_tree("false", 1)
+            self.input_stream.peek().type = "BOOLEAN"
+            self.read(type_check=True, type_="BOOLEAN")
+            # self.build_tree("false", 1)
 
         elif self.input_stream.peek().value == "nil":
             self.input_stream.peek().type = "nil"

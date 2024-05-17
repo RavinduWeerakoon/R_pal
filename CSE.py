@@ -116,9 +116,9 @@ class CSE:
         # elif st_node.name == "aug":
         #     delta.push(Delta_node("aug"))
         elif st_node.name == "true":
-            delta.push(Delta_node("true", value=True))
+            delta.push(Delta_node("BOOLEAN", value=True))
         elif st_node.name == "false":
-            delta.push(Delta_node("false", value=False))
+            delta.push(Delta_node("BOOLEAN", value=False))
         elif st_node.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "<", "<=", ">", ">=", "gr", "ge", "ls", "le", "eq"]:
             delta.push(Delta_node("OPERATOR", value=st_node.name))
             self.st_to_cse(st_node.left, index)
