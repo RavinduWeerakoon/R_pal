@@ -25,7 +25,12 @@ class FileParser:
         self.file =  open(self.file_name, "r")
 
     def get_file_content(self):
-        return self.file.read()
+        content = self.file.read()
+        # Replace '\n' with actual newline character
+        content = content.replace('\\n', '\n')
+        content = content.replace('\\t', '\t')
+
+        return content
     
     def lex(self):
         l = Lex(self.get_file_content())
