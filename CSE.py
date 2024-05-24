@@ -46,6 +46,18 @@ class CSE:
         # Will return the first character of the string
         primitive_env.add_assignment("Stem", Stack_node("Stem"))
 
+        #Istuple function
+        #Will return true if the given value is a tuple
+        primitive_env.add_assignment("Istuple", Stack_node("Istuple"))
+
+        #Isstring function
+        #Will return true if the given value is a string
+        primitive_env.add_assignment("Isstring", Stack_node("Isstring"))
+
+        #ItoS function
+        #Will convert an integer to a string
+        primitive_env.add_assignment("ItoS", Stack_node("ItoS"))
+
 
 
         self.envs = [primitive_env]
@@ -171,10 +183,16 @@ class CSE:
                 value = self.envs[current_env].get_assignment(control_element.value)
                 if type(value) == int:
                     self.stack.push(Stack_node("INTEGER", value))
+                elif type(value) == str:
+                    self.stack.push(Stack_node("STRING", value))
                 elif type(value) == bool:
                     self.stack.push(Stack_node("BOOLEAN", value))
+                elif type(value) == tuple:
+                    self.stack.push(Stack_node("Tuple", value))
                 elif type(value) == Stack_node:
                     self.stack.push(value)
+                elif not value:
+                    self.stack.push(Stack_node("nil"))
                 else:
                     raise Exception(f"Invalid value / type not handled. Value: {value}")
                 
@@ -196,13 +214,17 @@ class CSE:
 
                     if len(lambda_node.variable) > 1:
                         # Multiple variables in lambda
+                            # rand:Stack_node = self.stack.pop()
+                            # print("\n\nADDING TO ENV: ", var, rand, "\n\n")
+                            # new_env.add_assignment(var, rand)
+
                         rand:Stack_node = self.stack.pop()
                         for i, var in enumerate(lambda_node.variable):
                             new_env.add_assignment(var, rand.value[i])
                     else:
                         # Single variable in lambda
                         rand = self.stack.pop()
-                        new_env.add_assignment(lambda_node.variable, rand)
+                        new_env.add_assignment(lambda_node.variable[0], rand)
                         
                     self.envs.append(new_env)
 
@@ -247,7 +269,21 @@ class CSE:
                     if n.value > len(tuple_.value):
                         raise Exception("Invalid index for tuple. n > len(Tuple)")
                     
-                    self.stack.push(tuple_.value[n.value - 1])
+
+                    value = tuple_.value[n.value - 1]
+                    if type(value) == int:
+                        self.stack.push(Stack_node("INTEGER", value))
+                    elif type(value) == bool:
+                        self.stack.push(Stack_node("BOOLEAN", value))
+                    elif type(value) == str:
+                        self.stack.push(Stack_node("STRING", value))
+                    elif type(value) == tuple:
+                        self.stack.push(Stack_node("Tuple", value))
+                    elif not value:
+                        self.stack.push(Stack_node("nil"))
+                    else:
+                        raise Exception(f"Invalid value / type found with index {n.value} of tuple. Value: {value}, Type : {value.type}")
+                    # self.stack.push(tuple_.value[n.value - 1])
                         
 
                 elif operand1.type == "Print":
@@ -261,6 +297,7 @@ class CSE:
                     if stack_node.type == "nil":
                         self.stack.push(Stack_node("INTEGER", 0))
                     elif stack_node.type == "Tuple":
+                        print("ORDER", stack_node, "=====", stack_node.value)
                         self.stack.push(Stack_node("INTEGER", len(stack_node.value)))
                     else:
                         raise Exception(f"Invalid top of stack for Order. Must be Tuple or nil got {stack_node.type}")
@@ -272,7 +309,7 @@ class CSE:
                     operand1 = self.stack.pop()
                     if operand1.type != "STRING" or operand2.type != "STRING":
                         raise Exception(f"Invalid operands for Conc. Must be STRING got {operand1.type} and {operand2.type}")
-                    self.stack.push(Stack_node("STRING", operand1.value + operand2.value))
+                    self.stack.push(Stack_node("STRING", operand2.value + operand1.value))
 
                     # Pop off a second gamma from the control structure
                     self.control.pop()
@@ -295,6 +332,29 @@ class CSE:
                     else:
                         self.stack.push(Stack_node("STRING", string.value[0]))
 
+                elif operand1.type == "Istuple":
+                    istuple = self.stack.pop()
+                    value = self.stack.pop()
+                    if value.type == "Tuple":
+                        self.stack.push(Stack_node("BOOLEAN", True))
+                    else:
+                        self.stack.push(Stack_node("BOOLEAN", False))
+
+                elif operand1.type == "Isstring":
+                    isstring = self.stack.pop()
+                    value = self.stack.pop()
+                    if value.type == "STRING":
+                        self.stack.push(Stack_node("BOOLEAN", True))
+                    else:
+                        self.stack.push(Stack_node("BOOLEAN", False))
+
+                elif operand1.type == "ItoS":
+                    itos = self.stack.pop()
+                    integer = self.stack.pop()
+                    if integer.type != "INTEGER":
+                        raise Exception(f"Invalid operand for ItoS. Must be INTEGER got {integer.type}")
+                    self.stack.push(Stack_node("STRING", str(integer.value)))
+
                 else:
                     # print("Invalid gamma operation. Operand1:", operand1.type)
                     raise Exception("Invalid gamma operation. No lambda / eeta on top of stack")
@@ -307,7 +367,7 @@ class CSE:
                 new_tuple = Stack_node("Tuple", tuple())
                 for i in range(control_element.value):
                     rand = self.stack.pop()
-                    new_tuple.value =  new_tuple.value + (rand,)
+                    new_tuple.value =  new_tuple.value + (rand.value,)
                 self.stack.push(new_tuple)
 
 
@@ -371,18 +431,23 @@ class CSE:
                         if operand2.type == "nil":
                             self.stack.push(operand1)
                         else:
-                            new_tuple = (operand2.value,) + operand1.value
+                            new_tuple = operand1.value + (operand2.value,)
                             self.stack.push(Stack_node("Tuple", new_tuple))
                     elif operand1.type == "nil":
-                        self.stack.push(Stack_node("Tuple", (operand2.value,)))
+                        if operand2.type == "nil":
+                            self.stack.push(Stack_node("nil"))
+                        elif operand2.type == "Tuple":
+                            self.stack.push(operand2)
+                        else:
+                            self.stack.push(Stack_node("Tuple", (operand2.value,)))
                     else:
                         if operand2.type == "nil":
                             self.stack.push(Stack_node("Tuple", (operand1.value,)))
                         elif operand2.type == "Tuple":
-                            new_tuple = operand2.value +  (operand1.value,)
+                            new_tuple = (operand1.value,) + operand2.value
                             self.stack.push(Stack_node("Tuple", new_tuple))
                         else:
-                            new_tuple = (operand2.value, operand1.value)
+                            new_tuple = (operand1.value, operand2.value)
                             self.stack.push(Stack_node("Tuple", new_tuple))
                 else:
                     raise Exception(f"Invalid Operator {control_element.value}")

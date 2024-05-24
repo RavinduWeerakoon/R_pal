@@ -155,12 +155,12 @@ class env_node():
     #possible change is that wehen assigning multiple variables
     def add_assignment(self, variable, value):
         # print("+++++++ASSINGING VARIABLE: ",variable, value)
-        if type(variable) == list:
+        # if type(variable) == list:
             
             
-            item = variable[-1] #removing the var from it if we need another var left in the var list
-            self.assignments[item] = value
-        else:
+        #     item = variable[-1] #removing the var from it if we need another var left in the var list
+        #     self.assignments[item] = value
+        # else:
             self.assignments[variable] = value
 
 
@@ -172,7 +172,7 @@ class env_node():
             if type(self.assignments[variable]) == Stack_node:
                 return self.assignments[variable]
             # If the assignment is a primitive return the value
-            return self.assignments[variable].value
+            return self.assignments[variable]
         elif self.parent:
             return self.parent.get_assignment(variable)
         else:
