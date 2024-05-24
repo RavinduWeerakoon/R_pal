@@ -80,6 +80,8 @@ class CSE:
 
 
     def st_to_cse(self, st_node:ST_node, index=0):
+        if self.debug:
+            print("From st_to_cse",st_node)
         delta = self.deltas[index]
         if st_node.name == "lambda":
             # lambda_delta_node = Delta_node("lambda", index=self.increment_index(), variable=st_node.left.value)
@@ -297,7 +299,6 @@ class CSE:
                     if stack_node.type == "nil":
                         self.stack.push(Stack_node("INTEGER", 0))
                     elif stack_node.type == "Tuple":
-                        print("ORDER", stack_node, "=====", stack_node.value)
                         self.stack.push(Stack_node("INTEGER", len(stack_node.value)))
                     else:
                         raise Exception(f"Invalid top of stack for Order. Must be Tuple or nil got {stack_node.type}")

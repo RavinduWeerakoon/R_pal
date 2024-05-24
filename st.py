@@ -111,6 +111,20 @@ class ST_node:
         ternary_node = ST_node("->", B, F)
         ternary_node.set_mid(T)
         return ternary_node
+    
+    @staticmethod
+    def and_node(children):
+        comma_node = ST_node(",")
+        tau_node = ST_node("tau")
+
+        for child in children:
+            print("AND NODE CHILD, ", child.name, child.left, child.right)
+            comma_node.children.append(child.left)
+            tau_node.children.append(child.right)
+
+        return ST_node("=", comma_node, tau_node)
+
+        
 
 
 
@@ -175,7 +189,7 @@ class Standard_tree:
         elif child.name == "where":
             return ST_node.where(child.children[1].left,child.children[0], child.children[1].right)
         
-        elif child.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "gr", "ge", "ls", "le", "<", "<=", ">", ">=", "eq"]:
+        elif child.name in ["aug", "or", "&", "+", "-", "/", "*", "**", "gr", "ge", "ls", "le", "<", "<=", ">", ">=", "eq", "ne"]:
             # return ST_node.op(child.name, child.children[0], child.children[1])
             return ST_node(child.name, child.children[0], child.children[1])
         
@@ -222,6 +236,17 @@ class Standard_tree:
             com_node = ST_node(",")
             com_node.children = child.children
             return com_node
+        
+        elif child.name == "and":
+            print("AND NODE REACHED", child.children)
+            st_children = []
+            for grandchild in child.children:
+                if grandchild.name != "=":
+                    raise Exception("Invalid and node")
+                else:
+                    st_children.append(self.create_tree(grandchild))
+                    
+            return ST_node.and_node(st_children)
     
 
             

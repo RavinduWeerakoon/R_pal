@@ -18,22 +18,30 @@ class TestStringMethods(unittest.TestCase):
 
     def test_lex(self):
 
-        ##### Testing
+        #### Testing
         # l = Lex("""
-        # let rec Rev S =
-        # S eq '' -> ''
-        # | (Rev(Stern S)) @Conc (Stem S )
-        # within
-        # Pairs (S1,S2) =
-        # not (Isstring S1 & Isstring S2) -> 'both args not strings'
-        # | P (Rev S1, Rev S2)
-        #         where rec P (S1, S2) =
-        #         S1 eq '' & S2 eq '' -> nil
-        #         | (Stern S1 eq '' & Stern S2 ne '') or
-        #         (Stern S1 ne '' & Stern S2 eq '')
-        #         -> 'bad strings'
-        #         | (P (Stern S1, Stern S2) aug ((Stem S1) @Conc (Stem S2)))
-        # in Print ( Pairs ('abc','def'))
+        #         let Conc x y = Conc x y in
+        #         let S = 'CIS' and T = '104B'
+        #         and Mark = Conc 'CIS'
+        #         in
+        #         Print (Conc S T, S @Conc T, Mark T)
+        # """)
+
+        # l = Lex("""
+        #         let rec Rev S =
+        #         S eq '' -> ''
+        #         | (Rev(Stern S)) @Conc (Stem S )
+        #         within
+        #         Pairs (S1,S2) =
+        #         not (Isstring S1 & Isstring S2) -> 'both args not strings'
+        #         | P (Rev S1, Rev S2)
+        #                 where rec P (S1, S2) =
+        #                 S1 eq '' & S2 eq '' -> nil
+        #                 | (Stern S1 eq '' & Stern S2 ne '') or
+        #                 (Stern S1 ne '' & Stern S2 eq '')
+        #                 -> 'bad strings'
+        #                 | (P (Stern S1, Stern S2) aug ((Stem S1) @Conc (Stem S2)))
+        #         in Print ( Pairs ('abc','def'))
         # """)
         
 
@@ -52,10 +60,10 @@ class TestStringMethods(unittest.TestCase):
         # l = Lex("(fn (x,y,z). x+y+z)(5,6,7)")
         # l = Lex("let Sum(A) = Psum(A,2) where Psum (A,B) = A+B in Print Sum(2)")
         #########################################################################
-        l = Lex("""let Sum(A) = Psum (A,5)
-        where rec Psum (T,N) = N eq 0 -> 0
-        | Psum(T,N-1)+T N
-        in Print ( Sum (1,2,3,4,5) )""")
+        # l = Lex("""let Sum(A) = Psum (A,5)
+        # where rec Psum (T,N) = N eq 0 -> 0
+        # | Psum(T,N-1)+T N
+        # in Print ( Sum (1,2,3,4,5) )""")
         #########################################################################
         # l = Lex("""let rec f n = n eq 1 -> 1 | n * f (n - 1) in f 5""")
         # l = Lex("""let x = "abc" in Stern x""")
@@ -65,32 +73,32 @@ class TestStringMethods(unittest.TestCase):
         #         let rec fib n = n eq 0 -> nil | (fib (n-1) aug f (n)) in
         #         Print ( fib 5 )""")
         # l = Lex("""let rec f n = true & n in Print(f false)""")
-        # l = Lex("""
-        #         let TreePicture T = Picture (T,'') where
-        #         rec Picture (T,Spaces) =
-        #         not Istuple T -> 'T'
-        #         | ItoS (Order T)
-        #         @Conc '\n'
-        #         @Conc Spaces
-        #         @Conc '.   '
-        #         @Conc TPicture (T, Order T, Spaces @Conc '.   ') 
-        #                 where rec TPicture (T,N,Spaces) =
-        #                 N eq 0 -> ''
-        #                         |  N eq 1 -> Picture(T N, Spaces)
-        #                         | TPicture (T, N-1, Spaces)
-        #                                 @Conc '\n'
-        #                                 @Conc Spaces
-        #                                 @Conc Picture(T N, Spaces) 
+        l = Lex("""
+                let TreePicture T = Picture (T,'') where
+                rec Picture (T,Spaces) =
+                not Istuple T -> 'T'
+                | ItoS (Order T)
+                @Conc '\n'
+                @Conc Spaces
+                @Conc '.   '
+                @Conc TPicture (T, Order T, Spaces @Conc '.   ') 
+                        where rec TPicture (T,N,Spaces) =
+                        N eq 0 -> ''
+                                |  N eq 1 -> Picture(T N, Spaces)
+                                | TPicture (T, N-1, Spaces)
+                                        @Conc '\n'
+                                        @Conc Spaces
+                                        @Conc Picture(T N, Spaces) 
 
-        #         in  Print (  
+                in  Print (  
                         
-        #                 TreePicture( (1, (2,3,4), 5),
-        #                                 (6, '7'),
-        #                                 (8, 9, nil),
-        #                                 nil aug 10
-        #                                 )
-        #                 )
-        #         """)
+                        TreePicture( (1, (2,3,4), 5),
+                                        (6, '7'),
+                                        (8, 9, nil),
+                                        nil aug 10
+                                        )
+                        )
+                """)
 
 
         ##### NOT WORKING on CSE :(
