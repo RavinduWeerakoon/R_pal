@@ -341,7 +341,8 @@ class Parser():
 
         if self.input_stream.peek().value == "within":
             self.read("within")
-            print("D -> Da within D")
+            if self.debug:
+                print("D -> Da within D")
             self.D()
             self.build_tree("within", 2)
         
